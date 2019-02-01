@@ -2,8 +2,11 @@
 using orm.Configuration;
 using orm.Connection;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using orm.Attributes;
+using orm.Mapper;
 
 namespace orm
 {
@@ -12,24 +15,10 @@ namespace orm
         static void Main(string[] args)
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
-            ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
+            ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             Manager mng = new Manager(conn);
-
-            User user = new User(5, "Maria");
-            //mng.insert(user);
-            TableAttribute attr = (TableAttribute)Attribute.GetCustomAttribute(user.GetType(), typeof(TableAttribute));
-
-            if (attr == null)
-            {
-                Console.WriteLine("The attribute was not found.");
-            }
-            else
-            {
-                // Get the Name value.
-                Console.WriteLine("The Name Attribute is: {0}.", attr.TableName);
-            }
-
+            mng.insert();
             //conn.ConnectAndOpen();
             //SqlDataReader r=conn.executeReader(conn.execute("SELECT * FROM Users; "));
             //Console.WriteLine("Wiersze tabeli:");
@@ -39,7 +28,10 @@ namespace orm
             //}
             //r.Close();
             //conn.Dispose();
-
+            
+            User user1 = new User(18, "John");
+            PropertiesMapper mapper = new PropertiesMapper();
+            
             Console.WriteLine("Hello World!");
 
         }
