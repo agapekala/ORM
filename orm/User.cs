@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using orm.Attributes;
 
 namespace orm
 {
+    [TableAttribute("Users")]
     class User
     {
         private int _id;
