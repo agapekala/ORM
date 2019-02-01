@@ -9,9 +9,9 @@ namespace orm
     class User
     {
         [Column("id")]
-        private int _id;
+        private int _id { get; set; }
         [Column("name")]
-        private string _name;
+        private string _name { get; set; }
 
         public User(int id, string name)
         {
