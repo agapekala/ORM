@@ -16,7 +16,7 @@ namespace orm
             _connection=connection;
         }
 
-        public void insert()
+        public void insert(Object obj)
         {
             //_connection.ConnectAndOpen();
             //SqlCommand command = _connection.execute("INSERT INTO Users VALUES (3, 'Maria')");
