@@ -32,28 +32,11 @@ namespace orm
             User user1 = new User(18, "John");
             PropertiesMapper mapper = new PropertiesMapper();
             mapper.getTableName(user1);
-
-            Type t = user1.GetType();
-            PropertyInfo[] props = t.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (PropertyInfo prp in props)
+            List<string> list = mapper.getColumnName(user1);
+            foreach(string str in list)
             {
-                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
-
-                object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
-                var val = strGetter.Invoke(user1, null);
-
-                foreach (ColumnAttribute atr in att)
-                {
-                    Console.WriteLine(atr.ColumnName);
-                }
-
-                // object value = prp.GetValue(user1, new object[] { });
-                Console.WriteLine(prp.Name);
-                Console.WriteLine(val);
+                Console.WriteLine(str);
             }
-
-            Console.WriteLine("Hello World!");
-
         }
     }
 }

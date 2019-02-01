@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using orm.Attributes;
 
 namespace orm.Mapper {
@@ -20,7 +22,26 @@ namespace orm.Mapper {
             }
             
         }
+        public List<string> getColumnName(Object t)
+        {
+            List<string> list= new List<string> { };
+            Type type = t.GetType();
+            PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (PropertyInfo prp in props)
+            {
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
 
+                object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
+                var val = strGetter.Invoke(t, null);
+
+                foreach (ColumnAttribute atr in att)
+                {
+                    list.Add(atr.ColumnName);
+                    //Console.WriteLine(atr.ColumnName);
+                }
+            }
+            return list;
+        }
     }
 
 }
