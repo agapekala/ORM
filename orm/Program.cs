@@ -12,15 +12,18 @@ namespace orm
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
-            conn.ConnectAndOpen();
-            SqlDataReader r=conn.executeReader(conn.execute("SELECT * FROM Users; "));
-            Console.WriteLine("Wiersze tabeli:");
-            while (r.Read())
-            {
-                Console.WriteLine(r["id"].ToString() + "   " + r["name"].ToString());
-            }
-            r.Close();
-            conn.Dispose();
+            Manager mng = new Manager(conn);
+            mng.insert();
+            //conn.ConnectAndOpen();
+            //SqlDataReader r=conn.executeReader(conn.execute("SELECT * FROM Users; "));
+            //Console.WriteLine("Wiersze tabeli:");
+            //while (r.Read())
+            //{
+            //    Console.WriteLine(r["id"].ToString() + "   " + r["name"].ToString());
+            //}
+            //r.Close();
+            //conn.Dispose();
+
             Console.WriteLine("Hello World!");
 
         }
