@@ -5,7 +5,7 @@ namespace orm.Mapper {
 
     class PropertiesMapper { 
 
-        // Fetches the TableAttribute of the class.
+        // Fetches the TablesAttribute of the class.
         public string getTableName(Object t) {
             TableAttribute attr = (TableAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(TableAttribute));
             if (attr == null)
@@ -20,6 +20,7 @@ namespace orm.Mapper {
             }
             
         }
+
     }
 
 }

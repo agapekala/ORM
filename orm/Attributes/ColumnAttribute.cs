@@ -4,7 +4,7 @@ using System.Text;
 
 namespace orm.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ColumnAttribute : Attribute
     {
         public string ColumnName { get; private set; }
