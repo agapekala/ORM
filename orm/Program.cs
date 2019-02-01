@@ -31,7 +31,7 @@ namespace orm
             
             User user1 = new User(18, "John");
             PropertiesMapper mapper = new PropertiesMapper();
-            
+
             Console.WriteLine("Hello World!");
 
         }
