@@ -31,10 +31,10 @@ namespace orm
             string insertQuery=query.createInsertQuery(tableName, list);
             Console.WriteLine(insertQuery);
 
-            _connection.ConnectAndOpen();
-            SqlCommand command = _connection.execute(insertQuery);
-            command.ExecuteNonQuery();
-            _connection.Dispose();
+           // _connection.ConnectAndOpen();
+            //SqlCommand command = _connection.execute(insertQuery);
+            //command.ExecuteNonQuery();
+            //_connection.Dispose();
 
         }
     }
