@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using orm.Relationships;
 
 namespace orm.Query
 {
@@ -8,7 +9,6 @@ namespace orm.Query
     {
 
         public QueryBuilder() { }
-
         public string createInsertQuery(string tableName, List<Tuple<string, object>> columns)
         {
 

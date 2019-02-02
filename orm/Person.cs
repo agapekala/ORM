@@ -11,16 +11,28 @@ namespace orm
         [Column("id")]
         [PrimaryKey()]
         private int _id { get; set; }
+
         [Column("imie")]
         private string _name { get; set; }
 
         [Column("nazwisko")]
         private string _lastname { get; set; }
+
+        [Column("pies")]
+        [OneToOne()]
+        private Dog _dog { get; set; }
+
+
+        public void setDog(Dog dog) {
+            _dog = dog;
+        }
+
         public Person(int id, string name, string lastname)
         {
             _id = id;
             _name = name;
             _lastname = lastname;
+            _dog = null;
         }
     }
 }

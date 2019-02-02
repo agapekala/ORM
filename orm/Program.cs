@@ -28,10 +28,16 @@ namespace orm
             //}
             //r.Close();
             //conn.Dispose();
+
+            //User user1 = new User(18, "John");
+            Person person1 = new Person(1, "John", "Smith");
+            Dog dog1 = new Dog(10);
+            Bowl bowl1 = new Bowl(7);
+            dog1.setBowl(bowl1);
+            person1.setDog(dog1);
+
             
-            User user1 = new User(18, "John");
-            PropertiesMapper mapper = new PropertiesMapper();
-            mng.insert(user1);
+            mng.insert(person1);
         }
     }
 }

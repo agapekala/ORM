@@ -74,10 +74,36 @@ namespace orm.Mapper {
                     columnName = att1.ColumnName;
                 }
 
+
+                // If this property has an OneToOneAttribute, find forgein key.
+                object[] oneToOneAtt = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
+                if (oneToOneAtt.Length != 0) { 
+                    var forgeinKey = findPrimaryKey(val);
+                    val = forgeinKey;
+                }
+
+
                 list.Add(new Tuple<string, object>(columnName, val));
                 Console.WriteLine(val);
             }
             return list;
+        }
+
+        public object findPrimaryKey(object obj) {
+            object primaryKey;
+            Type type = obj.GetType();
+            PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (PropertyInfo prp in props)
+            {
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
+
+                primaryKey = strGetter.Invoke(obj, null);
+                object[] att = prp.GetCustomAttributes(typeof(PrimaryKeyAttribute), false);
+                if (att.Length != 0) {
+                    return primaryKey;
+                }
+            }
+            return null;    //TO-DO: Handle exception!!!
         }
 
         // Function that is used, when no attribute was set.
