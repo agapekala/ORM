@@ -13,7 +13,7 @@ namespace orm.Mapper {
             if (attr == null)
             {
                 Console.WriteLine("The attribute was not found.");
-                return null;
+                return convertObjectNameToString(t);
             }
             else
             {
@@ -30,14 +30,22 @@ namespace orm.Mapper {
             foreach (PropertyInfo prp in props)
             {
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
-
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
                 var val = strGetter.Invoke(t, null);
 
-                foreach (ColumnAttribute atr in att)
-                {
-                    list.Add(atr.ColumnName);
+                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
+                if (att.Length == 0) {
+                    string columnName = convertObjectNameToString(prp.Name);
+                    list.Add(columnName);;
                 }
+                else{
+                    foreach (ColumnAttribute atr in att)
+                    {
+                        list.Add(atr.ColumnName);
+                    }
+                }
+
+
             }
             return list;
         }
@@ -53,15 +61,40 @@ namespace orm.Mapper {
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
 
                 var val = strGetter.Invoke(obj, null);
-
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
-                ColumnAttribute att1 = (ColumnAttribute)att[0];
 
-                list.Add(new Tuple<string, object>(att1.ColumnName,val));
+                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
+                string columnName;
+                if (att.Length == 0)
+                {
+                    columnName = convertObjectNameToString(prp.Name);
+                }
+                else { 
+                    ColumnAttribute att1 = (ColumnAttribute)att[0];
+                    columnName = att1.ColumnName;
+                }
+
+                list.Add(new Tuple<string, object>(columnName, val));
                 Console.WriteLine(val);
             }
             return list;
         }
+
+        // Function that is used, when no attribute was set.
+        public string convertObjectNameToString(Object t) {
+            string nameWithNamespaces = t.ToString();
+            int appearanceOfLastFullStop = -1;
+
+            // Finding an index of fullstop, which appears right before class name.
+            for (int i = nameWithNamespaces.Length - 1; i>0; i--) {
+                if (nameWithNamespaces[i] == '.') {
+                    appearanceOfLastFullStop = i;
+                }
+            }
+            string nameWithoutNamespaces = nameWithNamespaces.Substring(appearanceOfLastFullStop+1);
+            return nameWithoutNamespaces;
+        }
+
     }
 
 }
