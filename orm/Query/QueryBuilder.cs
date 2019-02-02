@@ -23,7 +23,14 @@ namespace orm.Query
 
             foreach (Tuple<string, object> it in columns)
             {
-                returnQuery += it.Item2 + ", ";
+                if (it.Item2.GetType() == typeof(string))
+                {
+                    returnQuery +="'" + it.Item2 +"'" + ", ";
+                }
+                else
+                {
+                    returnQuery += it.Item2 + ", ";
+                }
             }
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
             returnQuery += ");";
