@@ -37,8 +37,28 @@ namespace orm.Mapper {
                 foreach (ColumnAttribute atr in att)
                 {
                     list.Add(atr.ColumnName);
-                    //Console.WriteLine(atr.ColumnName);
                 }
+            }
+            return list;
+        }
+
+        public List<Tuple<string, object>> getColumnAndValue(Object obj)
+        {
+            List<Tuple<string, object>> list = new List<Tuple<string, object>> { };
+
+            Type type = obj.GetType();
+            PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (PropertyInfo prp in props)
+            {
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
+
+                var val = strGetter.Invoke(obj, null);
+
+                object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
+                ColumnAttribute att1 = (ColumnAttribute)att[0];
+
+                list.Add(new Tuple<string, object>(att1.ColumnName,val));
+                Console.WriteLine(val);
             }
             return list;
         }

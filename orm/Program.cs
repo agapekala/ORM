@@ -31,12 +31,7 @@ namespace orm
             
             User user1 = new User(18, "John");
             PropertiesMapper mapper = new PropertiesMapper();
-            mapper.getTableName(user1);
-            List<string> list = mapper.getColumnName(user1);
-            foreach(string str in list)
-            {
-                Console.WriteLine(str);
-            }
+            mng.insert(user1);
         }
     }
 }
