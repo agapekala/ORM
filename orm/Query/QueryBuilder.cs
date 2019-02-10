@@ -25,10 +25,15 @@ namespace orm.Query
             {
                 if (it.Item2.GetType() == typeof(string))
                 {
+                    if (it.Item2.Equals("null"))
+                    {
+                        returnQuery += "null, ";
+                    }else
                     returnQuery += "'" + it.Item2 + "'" + ", ";
                 }
                 else
                 {
+                   
                     returnQuery += it.Item2 + ", ";
                 }
             }
@@ -55,11 +60,22 @@ namespace orm.Query
         {
             string returnQuery = "DROP TABLE IF EXISTS " + tableName + ";";
             returnQuery += "CREATE TABLE " + tableName + "(";
+            Boolean primaryKey = true;
             foreach (Tuple<string, object> it in columns)
             {
                 returnQuery += it.Item1 + " ";
-                returnQuery += CsTypesToSql[it.Item2.GetType()] + ", ";
+                returnQuery += CsTypesToSql[it.Item2.GetType()] ;
+                if (primaryKey)
+                {
+                    returnQuery += " PRIMARY KEY,   ";
+                    primaryKey = false;
+                }
+                else
+                {
+                    returnQuery +=  ", ";
+                }
             }
+
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
             returnQuery += ");";
 
@@ -81,6 +97,17 @@ namespace orm.Query
                 }
             }
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
+            returnQuery += " WHERE ";
+            Tuple<string, object> first = columns[0];
+            returnQuery += first.Item1 + "=";
+            returnQuery += first.Item2 + ";";
+            return returnQuery;
+        }
+        
+        public string createDeleteQuery(string tableName, List<Tuple<string, object>> columns)
+        {
+            string returnQuery = "DELETE FROM " + tableName ;
+
             returnQuery += " WHERE ";
             Tuple<string, object> first = columns[0];
             returnQuery += first.Item1 + "=";

@@ -10,8 +10,7 @@ namespace orm.Mapper
     {
 
         // Fetches the TablesAttribute of the class.
-        public string getTableName(Object t)
-        {
+        public string getTableName(Object t) {
             TableAttribute attr = (TableAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(TableAttribute));
             if (attr == null)
             {
@@ -22,9 +21,23 @@ namespace orm.Mapper
             {
                 Console.WriteLine("The Name Attribute is: {0}.", attr.TableName);
                 return attr.TableName;
-            }
-
+            } 
         }
+        
+//        public Boolean primaryKeyExists(Object t)
+//        {
+//                PrimaryKeyAttribute attr = (PrimaryKeyAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(PrimaryKeyAttribute));
+//                Console.Write(attr.PrimaryKeyName);
+//                if (attr == null)
+//                {
+//                    Console.WriteLine("Such a primary key already exists");
+//                    return true;
+//                }else
+//                {
+//                    Console.WriteLine("New primary key");
+//                    return false;
+//                }
+//        }
         public List<string> getColumnName(Object t)
         {
             List<string> list = new List<string> { };
@@ -88,8 +101,17 @@ namespace orm.Mapper
                 object[] oneToOneAtt = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
                 if (oneToOneAtt.Length != 0)
                 {
-                    var forgeinKey = findPrimaryKey(val);
-                    val = forgeinKey;
+                    if (val != null)
+                    {
+                        var forgeinKey = findPrimaryKey(val);
+                        val = forgeinKey;
+                    }
+                    else
+                    {
+                        val = "null";
+                        
+                    }
+
                 }
 
 

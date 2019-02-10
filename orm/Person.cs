@@ -33,7 +33,6 @@ namespace orm
             _id = id;
             _name = name;
             _lastname = lastname;
-            _dog = null;
         }
     }
 }

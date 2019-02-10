@@ -16,10 +16,8 @@ namespace orm
         private MSSqlConnection _connection;
         private PropertiesMapper _propertiesMapper;
         private RelationshipsMapper _relationshipsMapper;
-
         private List<string> _queries;
         private List<Tuple<string, object>> _conditions;
-
 
         public Manager(MSSqlConnection connection)
         {
@@ -34,35 +32,39 @@ namespace orm
             string tableName = _propertiesMapper.getTableName(obj);
             List<string> ColumnList = _propertiesMapper.getColumnName(obj);
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
-
+            object primarKey=columnsAndValuesList[0].Item2; //TO DO: exception that henadles when trying to add id that already exists
+            Console.WriteLine(("pk:   "+primarKey));
+            
+            
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
 
             QueryBuilder query = new QueryBuilder();
             if (oneToOneRelationshipsList.Count == 0)
             {
-                string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
-                string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
-                _queries.Add(createTableQuery);
-                _queries.Add(insertQuery);
-
-                // Since there are no other relationships, we can execute command here.
-
+//                    string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
+                    string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+//                    _queries.Add(createTableQuery);
+                    _queries.Add(insertQuery);             
             }
             else
             {
                 handleOneToOneRelationships(obj);
+//                string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
+                string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+//                _queries.Add(createTableQuery);
+                _queries.Add(insertQuery);   
+
             }
             _connection.ConnectAndOpen();
             foreach (string q in _queries)
             {
+                Console.WriteLine(q);
                 SqlCommand command = _connection.execute(q);
                 command.ExecuteNonQuery();
-                Console.WriteLine(q);
+                
             }
-            // _connection.ConnectAndOpen();
-            //SqlCommand command = _connection.execute(insertQuery);
-            //command.ExecuteNonQuery();
             _connection.Dispose();
+            _queries.Clear();
 
         }
 
@@ -79,30 +81,16 @@ namespace orm
             {
                 foreach (OneToOneRelationship rel in oneToOneRelationshipsList)
                 {
-                    Console.WriteLine("rel    " + rel.getOwned());
-                    if (rel.getOwned() == null)
+                    if (rel.getOwned() != null)
                     {
-                        Console.WriteLine("nnnnnnnnnnnnnn" + columnsAndValuesList);
+                       handleOneToOneRelationships(rel.getOwned());
                     }
-                    else
-                        handleOneToOneRelationships(rel.getOwned());
                 }
             }
-            else
-            {
-
-            }
-
-            string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
-            _queries.Add(createTableQuery);
-
-            string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
-            _queries.Add(insertQuery);
-
-            // string updateQuery = query.createUpdateQuery(tableName, columnsAndValuesList, _conditions);
-            // _queries.Add(updateQuery);
-
-
+//            string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
+//            string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+////            _queries.Add(createTableQuery);
+//            _queries.Add(insertQuery);     
 
         }
         public void update(Object obj, List<Tuple<string, object>> conditions)
@@ -125,6 +113,45 @@ namespace orm
             else
             {
                 handleOneToOneRelationships(obj);
+                string updateQuery = query.createUpdateQuery(tableName, columnsAndValuesList, conditions);
+                _queries.Add(updateQuery);
+            }
+            _connection.ConnectAndOpen();
+            foreach (string q in _queries)
+            {
+                Console.WriteLine(q);
+                SqlCommand command = _connection.execute(q);
+                command.ExecuteNonQuery();
+
+            }
+            // _connection.ConnectAndOpen();
+            //SqlCommand command = _connection.execute(insertQuery);
+            //command.ExecuteNonQuery();
+            _connection.Dispose();
+        }
+        
+        public void delete(Object obj, List<Tuple<string, object>> conditions)
+        {
+            _conditions = conditions;
+            string tableName = _propertiesMapper.getTableName(obj);
+            List<string> ColumnList = _propertiesMapper.getColumnName(obj);
+            List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
+
+            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
+
+            QueryBuilder query = new QueryBuilder();
+            if (oneToOneRelationshipsList.Count == 0)
+            {
+                string deleteQuery = query.createDeleteQuery(tableName, columnsAndValuesList);
+                _queries.Add(deleteQuery);
+                // Since there are no other relationships, we can execute command here.
+
+            }
+            else
+            {
+                handleOneToOneRelationships(obj);
+                string deleteQuery = query.createDeleteQuery(tableName, columnsAndValuesList);
+                _queries.Add(deleteQuery);
             }
             _connection.ConnectAndOpen();
             foreach (string q in _queries)
