@@ -13,11 +13,11 @@ namespace orm.Query
         {
 
             string returnQuery = "INSERT INTO " + tableName + "(";
-            foreach (Tuple<string,object> it in columns)
+            foreach (Tuple<string, object> it in columns)
             {
-                returnQuery +=it.Item1+", ";
+                returnQuery += it.Item1 + ", ";
             }
-            returnQuery = returnQuery.Remove(returnQuery.Length-2);
+            returnQuery = returnQuery.Remove(returnQuery.Length - 2);
 
             returnQuery += ") VALUES (";
 
@@ -25,7 +25,7 @@ namespace orm.Query
             {
                 if (it.Item2.GetType() == typeof(string))
                 {
-                    returnQuery +="'" + it.Item2 +"'" + ", ";
+                    returnQuery += "'" + it.Item2 + "'" + ", ";
                 }
                 else
                 {
@@ -35,6 +35,56 @@ namespace orm.Query
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
             returnQuery += ");";
 
+            return returnQuery;
+        }
+        public static readonly Dictionary<Type, string> CsTypesToSql = new Dictionary<Type, string>()
+        {
+            {typeof(System.Int64),"bigint"},
+            {typeof(System.Byte[]),"binary"},
+            {typeof(System.Boolean),"bit"},
+            {typeof(System.String),"varchar(255)" },
+            {typeof(System.Char[]),"varchar(255)" },
+            {typeof(System.DateTime),"date" },
+            {typeof(System.Decimal),"decimal" },
+            {typeof(System.Double),"float" },
+            {typeof(System.Int32),"int" },
+        };
+
+
+        public string createCreateTableQuery(string tableName, List<Tuple<string, object>> columns)
+        {
+            string returnQuery = "DROP TABLE IF EXISTS " + tableName + ";";
+            returnQuery += "CREATE TABLE " + tableName + "(";
+            foreach (Tuple<string, object> it in columns)
+            {
+                returnQuery += it.Item1 + " ";
+                returnQuery += CsTypesToSql[it.Item2.GetType()] + ", ";
+            }
+            returnQuery = returnQuery.Remove(returnQuery.Length - 2);
+            returnQuery += ");";
+
+            return returnQuery;
+        }
+        public string createUpdateQuery(string tableName, List<Tuple<string, object>> columns, List<Tuple<string, object>> conditions)
+        {
+            string returnQuery = "UPDATE " + tableName + " SET ";
+            foreach (Tuple<string, object> it in conditions)
+            {
+                returnQuery += it.Item1 + "=";
+                if (it.Item2.GetType() == typeof(string))
+                {
+                    returnQuery += "'" + it.Item2 + "'" + ", ";
+                }
+                else
+                {
+                    returnQuery += it.Item2 + ", ";
+                }
+            }
+            returnQuery = returnQuery.Remove(returnQuery.Length - 2);
+            returnQuery += " WHERE ";
+            Tuple<string, object> first = columns[0];
+            returnQuery += first.Item1 + "=";
+            returnQuery += first.Item2 + ";";
             return returnQuery;
         }
 

@@ -13,14 +13,17 @@ namespace orm
 
         [Column("miska")]
         [OneToOne()]
-        private Bowl _bowl { get; set; }
+        private Bowl _bowl { get; set; } = null;
 
-        public void setBowl(Bowl bowl) {
+        public void setBowl(Bowl bowl)
+        {
             _bowl = bowl;
         }
 
-        public Dog(int id) {
+        public Dog(int id, Bowl bowl = null)
+        {
             _id = id;
+            _bowl = bowl;
         }
     }
 }

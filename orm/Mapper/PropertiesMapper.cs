@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using orm.Attributes;
 
-namespace orm.Mapper {
+namespace orm.Mapper
+{
 
-    class PropertiesMapper { 
+    class PropertiesMapper
+    {
 
         // Fetches the TablesAttribute of the class.
-        public string getTableName(Object t) {
+        public string getTableName(Object t)
+        {
             TableAttribute attr = (TableAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(TableAttribute));
             if (attr == null)
             {
@@ -20,32 +23,37 @@ namespace orm.Mapper {
                 Console.WriteLine("The Name Attribute is: {0}.", attr.TableName);
                 return attr.TableName;
             }
-            
+
         }
         public List<string> getColumnName(Object t)
         {
-            List<string> list= new List<string> { };
-            Type type = t.GetType();
+            List<string> list = new List<string> { };
+            Type type = t.GetType();  //name of a class
+                                      //            Console.WriteLine("type " + type);
             PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (PropertyInfo prp in props)
+            foreach (PropertyInfo prp in props) //column names
             {
-                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
+                //                Console.WriteLine("prop " + prp);
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
+                                                                          //                Console.WriteLine("strGetter  " + strGetter);
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
-                var val = strGetter.Invoke(t, null);
-
-                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
-                if (att.Length == 0) {
+                var val = strGetter.Invoke(t, null); //attribute np.1, John
+                                                     //                Console.WriteLine("val " + val);  
+                                                     // If no attribute was set convert field's name into string. Otherwise take string from attribute.
+                if (att.Length == 0)
+                {
                     string columnName = convertObjectNameToString(prp.Name);
-                    list.Add(columnName);;
+                    list.Add(columnName); ;
                 }
-                else{
+                else
+                {
                     foreach (ColumnAttribute atr in att)
                     {
+                        //column name 
+                        //                        Console.WriteLine("atr.ColumnName  " + atr.ColumnName);
                         list.Add(atr.ColumnName);
                     }
                 }
-
-
             }
             return list;
         }
@@ -69,7 +77,8 @@ namespace orm.Mapper {
                 {
                     columnName = convertObjectNameToString(prp.Name);
                 }
-                else { 
+                else
+                {
                     ColumnAttribute att1 = (ColumnAttribute)att[0];
                     columnName = att1.ColumnName;
                 }
@@ -77,7 +86,8 @@ namespace orm.Mapper {
 
                 // If this property has an OneToOneAttribute, find forgein key.
                 object[] oneToOneAtt = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
-                if (oneToOneAtt.Length != 0) { 
+                if (oneToOneAtt.Length != 0)
+                {
                     var forgeinKey = findPrimaryKey(val);
                     val = forgeinKey;
                 }
@@ -89,7 +99,8 @@ namespace orm.Mapper {
             return list;
         }
 
-        public object findPrimaryKey(object obj) {
+        public object findPrimaryKey(object obj)
+        {
             object primaryKey;
             Type type = obj.GetType();
             PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
@@ -99,7 +110,8 @@ namespace orm.Mapper {
 
                 primaryKey = strGetter.Invoke(obj, null);
                 object[] att = prp.GetCustomAttributes(typeof(PrimaryKeyAttribute), false);
-                if (att.Length != 0) {
+                if (att.Length != 0)
+                {
                     return primaryKey;
                 }
             }
@@ -107,17 +119,20 @@ namespace orm.Mapper {
         }
 
         // Function that is used, when no attribute was set.
-        public string convertObjectNameToString(Object t) {
+        public string convertObjectNameToString(Object t)
+        {
             string nameWithNamespaces = t.ToString();
             int appearanceOfLastFullStop = -1;
 
             // Finding an index of fullstop, which appears right before class name.
-            for (int i = nameWithNamespaces.Length - 1; i>0; i--) {
-                if (nameWithNamespaces[i] == '.') {
+            for (int i = nameWithNamespaces.Length - 1; i > 0; i--)
+            {
+                if (nameWithNamespaces[i] == '.')
+                {
                     appearanceOfLastFullStop = i;
                 }
             }
-            string nameWithoutNamespaces = nameWithNamespaces.Substring(appearanceOfLastFullStop+1);
+            string nameWithoutNamespaces = nameWithNamespaces.Substring(appearanceOfLastFullStop + 1);
             return nameWithoutNamespaces;
         }
 

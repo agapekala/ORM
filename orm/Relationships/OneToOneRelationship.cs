@@ -9,12 +9,14 @@ namespace orm.Relationships
         private object _owner { get; set; }
         private object _owned { get; set; }
 
-        public OneToOneRelationship(object owner, object owned) {
+        public OneToOneRelationship(object owner = null, object owned = null)
+        {
             _owned = owned;
             _owner = owner;
         }
 
-        public object getOwned() {
+        public object getOwned()
+        {
             return _owned;
         }
     }

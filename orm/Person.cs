@@ -23,7 +23,8 @@ namespace orm
         private Dog _dog { get; set; }
 
 
-        public void setDog(Dog dog) {
+        public void setDog(Dog dog)
+        {
             _dog = dog;
         }
 
