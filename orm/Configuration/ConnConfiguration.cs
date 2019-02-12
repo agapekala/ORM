@@ -7,8 +7,6 @@ namespace orm.Configuration
     {
         private string _serverName;
         private string _databaseName;
-        private string _userId;
-        private string _password;
 
 
         public string GetServerName()
@@ -22,12 +20,10 @@ namespace orm.Configuration
         }
 
 
-        public ConnConfiguration(String server, String db, String user, String pass)
+        public ConnConfiguration(String server, String db)
         {
             _serverName = server;
             _databaseName = db;
-            _userId = user;
-            _password = pass;
         }
 
         public ConnConfiguration ServerName(string serverName)
@@ -51,8 +47,8 @@ namespace orm.Configuration
 
         public String creteConnectionString()
         {
-            return "Server=" + _serverName + ";Database=" + _databaseName + ";User Id=" +
-                                           _userId + ";Password=" + _password + ";MultipleActiveResultSets=true;";
+            return "Data Source=" + _serverName + ";Initial Catalog=" + _databaseName + ";Integrated Security=True";
+
         }
     }
 }
