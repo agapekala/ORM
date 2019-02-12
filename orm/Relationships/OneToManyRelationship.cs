@@ -7,9 +7,9 @@ namespace orm.Relationships
     class OneToManyRelationship : IRelationship
     {
         private object _owner { get; set; }
-        private LinkedList<object> _owned { get; set; }
+        private object _owned { get; set; }
 
-        public OneToManyRelationship(object owner, LinkedList<object> owned)
+        public OneToManyRelationship(object owner, object owned)
         {
             _owned = owned;
             _owner = owner;

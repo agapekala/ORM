@@ -46,6 +46,7 @@ namespace orm
             person1.addCat(cat2);
             
             mng.insert(person1);
+            Console.ReadLine();
         }
     }
 }

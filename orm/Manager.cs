@@ -9,6 +9,7 @@ using System.Reflection;
 using orm.Query;
 using orm.Relationships;
 using System.Linq;
+using System.Collections;
 
 namespace orm
 {
@@ -117,14 +118,12 @@ namespace orm
                 Console.WriteLine("Rel: "+rel.getOwned().ToString());
 
                 Type listType = rel.getOwnedType();
-                IEnumerable <object> listOfObjects = (LinkedList<object>)rel.getOwned();
-                //listOfObjects = Convert.ChangeType(listOfObjects, rel.getOwned().GetType());
-
                 
+                IEnumerable e = rel.getOwned() as IEnumerable;
 
-                foreach (object child in listOfObjects) {
-//                    handleOneToOneRelationships(child, null);
+                Console.WriteLine("ZUPAAAA");
 
+                foreach (object child in e) {
                     handleOneToManyRelationships(child, obj);
                 }
             }
@@ -132,6 +131,12 @@ namespace orm
             string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
             _queries.Add(insertQuery);
 
+        }
+
+        public static object ConvertList(List<Object> value, Type type)
+        {
+            var containedType = type.GenericTypeArguments.First();
+            return value.Select(item => Convert.ChangeType(item, containedType)).ToList();
         }
 
 

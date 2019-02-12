@@ -43,13 +43,12 @@ namespace orm.Mapper
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
                 object[] att = prp.GetCustomAttributes(typeof(OneToManyAttribute), false);
                 var val = strGetter.Invoke(o, null);
-                Console.WriteLine("DEBUGG" + val);
                 if (att.Length != 0)
                 {
                     object owner = o;
                     object owned = val;
                     OneToManyRelationship oneToManyRelationship = new OneToManyRelationship(owner, owned);
-                    //listOfRelationships.Add(oneToManyRelationship);
+                    listOfRelationships.Add(oneToManyRelationship);
                 }
             }
             return listOfRelationships;
