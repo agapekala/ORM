@@ -22,12 +22,14 @@ namespace orm.Configuration
         }
 
 
-        public ConnConfiguration(String server, String db, String user, String pass)
+        //public ConnConfiguration(String server, String db, String user, String pass)
+        public ConnConfiguration(String server, String db)
+
         {
             _serverName = server;
             _databaseName = db;
-            _userId = user;
-            _password = pass;
+           // _userId = user;
+           // _password = pass;
         }
 
         public ConnConfiguration ServerName(string serverName)

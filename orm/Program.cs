@@ -16,7 +16,9 @@ namespace orm
         static void Main(string[] args)
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
-            ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
+            //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
+            ConnConfiguration conf = new ConnConfiguration("localhost","Testy");
+
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
