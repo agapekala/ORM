@@ -24,7 +24,6 @@ namespace orm.Query
             
             foreach (Tuple<string, object> it in columns)
             {
-                Console.WriteLine(it.Item1 + ", "+ it.Item2);
                 if (it.Item2.GetType() == typeof(string))
                 {
                     returnQuery +="'" + it.Item2 +"'" + ", ";

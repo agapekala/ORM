@@ -11,11 +11,11 @@ namespace orm
     {
         [Column("id")]
         [PrimaryKey]
-        private int _id { get; set; }
+        protected int _id { get; set; }
 
         [Column("miska")]
         [OneToOne()]
-        private Bowl _bowl { get; set; }
+        protected Bowl _bowl { get; set; }
 
         public void setBowl(Bowl bowl)
         {

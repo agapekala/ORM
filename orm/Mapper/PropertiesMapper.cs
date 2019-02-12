@@ -17,7 +17,6 @@ namespace orm.Mapper {
             }
             else
             {
-                Console.WriteLine("The Name Attribute is: {0}.", attr.TableName);
                 return attr.TableName;
             }
             
@@ -32,6 +31,7 @@ namespace orm.Mapper {
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
                 var val = strGetter.Invoke(t, null);
+
 
                 // If no attribute was set convert field's name into string. Otherwise take string from attribute.
                 if (att.Length == 0) {
@@ -88,7 +88,6 @@ namespace orm.Mapper {
 
 
                 list.Add(new Tuple<string, object>(columnName, val));
-                Console.WriteLine(val);
             }
             return list;
         }

@@ -30,7 +30,7 @@ namespace orm
             //conn.Dispose();
 
             //User user1 = new User(18, "John");
-            Person person1 = new Person(1, "John", "Smith");
+            Woman person1 = new Woman(1, "John", "Smith", "czarne");
             Dog dog1 = new Dog(10);
             Bowl bowl1 = new Bowl(7);
             dog1.setBowl(bowl1);
@@ -46,7 +46,6 @@ namespace orm
             person1.addCat(cat2);
             
             mng.insert(person1);
-            Console.ReadLine();
         }
     }
 }

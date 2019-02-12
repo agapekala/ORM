@@ -115,13 +115,11 @@ namespace orm
             }
             foreach (OneToManyRelationship rel in oneToManyRelationshipsList)
             {
-                Console.WriteLine("Rel: "+rel.getOwned().ToString());
 
                 Type listType = rel.getOwnedType();
                 
                 IEnumerable e = rel.getOwned() as IEnumerable;
 
-                Console.WriteLine("ZUPAAAA");
 
                 foreach (object child in e) {
                     handleOneToManyRelationships(child, obj);
