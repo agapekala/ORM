@@ -60,15 +60,15 @@ namespace orm
                 //    
 
             }
-            _connection.ConnectAndOpen();
+            //_connection.ConnectAndOpen();
             foreach (string q in _queries)
             {
                 Console.WriteLine(q);
-                SqlCommand command = _connection.execute(q);
-                command.ExecuteNonQuery();
+               // SqlCommand command = _connection.execute(q);
+               // command.ExecuteNonQuery();
 
             }
-            _connection.Dispose();
+            //_connection.Dispose();
             _queries.Clear();
 
         }
@@ -190,7 +190,13 @@ namespace orm
             // This part is responsible for adding foreign key in child object. (Cat receives person's ID).
             if (parent != null)
             {
-                string foreignColumn = _propertiesMapper.getTableName(parent); // Gets name of the column, which contains parent's ID.
+                // Gets name of the column, which contains parent's ID.
+                // string foreignColumn = _propertiesMapper.getTableName(parent); 
+                var nameOfBaseClass = parent.GetType().BaseType;
+                var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
+                string foreignColumn = nameOfBaseClassWithoutNamespaces;
+
+                Console.WriteLine("value="+ nameOfBaseClassWithoutNamespaces);
                 foreignColumn += "Id";
                 object parentId = _propertiesMapper.findPrimaryKey(parent); // Gets foreign key.
                 columnsAndValuesList.Add(new Tuple<string, object>(foreignColumn, parentId));
@@ -207,13 +213,10 @@ namespace orm
             }
             foreach (OneToManyRelationship rel in oneToManyRelationshipsList)
             {
-                Console.WriteLine("Rel: " + rel.getOwned().ToString());
 
                 Type listType = rel.getOwnedType();
 
                 IEnumerable e = rel.getOwned() as IEnumerable;
-
-                Console.WriteLine("ZUPAAAA");
 
                 foreach (object child in e)
                 {

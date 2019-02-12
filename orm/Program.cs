@@ -16,7 +16,8 @@ namespace orm
         static void Main(string[] args)
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
-            ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
+            //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
+            ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
@@ -31,7 +32,8 @@ namespace orm
             //conn.Dispose();
 
             //User user1 = new User(18, "John");
-            Person person1 = new Person(1, "John", "Smith");
+            //Person person1 = new Person(1, "John", "Smith");
+            Woman person1 = new Woman(1, "John", "Smith", "czarne");
             Dog dog1 = new Dog(10);
             Bowl bowl1 = new Bowl(7);
             dog1.setBowl(bowl1);
@@ -45,6 +47,8 @@ namespace orm
             cat2.setBowl(bowlCat2);
             person1.addCat(cat1);
             person1.addCat(cat2);
+
+            Console.WriteLine("woman dziedziczy po:" + typeof(Woman).BaseType.Name);
 
             mng.insert(person1);
         }

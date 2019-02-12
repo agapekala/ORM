@@ -20,7 +20,6 @@ namespace orm.Mapper
             }
             else
             {
-                Console.WriteLine("The Name Attribute is: {0}.", attr.TableName);
                 return attr.TableName;
             }
         }
@@ -119,7 +118,6 @@ namespace orm.Mapper
                     }
                 }
                 list.Add(new Tuple<string, object>(columnName, val));
-                Console.WriteLine(val);
             }
             return list;
         }
