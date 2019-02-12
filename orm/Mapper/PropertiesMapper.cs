@@ -141,6 +141,38 @@ namespace orm.Mapper
             return null;    //TO-DO: Handle exception!!!
         }
 
+
+        // Returns the name of the field that is set to be a primary key.
+        public string findPrimaryKeyFieldName(object obj) {
+            object primaryKey;
+            Type type = obj.GetType();
+            PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (PropertyInfo prp in props)
+            {
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
+
+                primaryKey = strGetter.Invoke(obj, null);
+                object[] att = prp.GetCustomAttributes(typeof(PrimaryKeyAttribute), false);
+                if (att.Length != 0)
+                {
+                    string columnName;
+                    object[] attColumn = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
+                    ColumnAttribute att1 = (ColumnAttribute)attColumn[0];
+                    if (att1.ColumnName == null)
+                    {
+                        columnName = convertObjectNameToString(prp.Name);
+                    }
+                    else
+                    {
+                        columnName = att1.ColumnName;
+                    }
+                    return columnName;
+                }
+            }
+            return null;    //TO-DO: Handle exception!!!
+        }
+
+
         // Function that is used, when no attribute was set.
         public string convertObjectNameToString(Object t)
         {

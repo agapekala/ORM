@@ -48,7 +48,7 @@ namespace orm
             _cats.AddLast(cat);
         }
 
-
+        public Person() { }
         public Person(int id, string name, string lastname)
         {
             _id = id;

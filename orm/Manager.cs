@@ -116,15 +116,46 @@ namespace orm
             }
         }
 
-        public object select(Type type, int id)
+        public object select(/*Type type*/ object obj, int id)
         {
-            object obj = Activator.CreateInstance(type);
             QueryBuilder queryBuilder = new QueryBuilder();
-            object tableName = _propertiesMapper.getTableName(obj);
-            //String query = queryBuilder.createSelectQuery(tableName, id);
+
+            string tableName = _propertiesMapper.getTableName(obj);
+            string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
+
+            String query = queryBuilder.createSelectQuery(tableName, id, primaryKeyName);
+            Console.WriteLine(query);
+
+            // Executing single select query. 
+            _connection.ConnectAndOpen();
+            SqlCommand command = _connection.execute(query);
+            //command.ExecuteNonQuery();
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                for (int i=0; i<reader.FieldCount; i++) {
+                    string formatString = "{0}";
+                    Console.Write(String.Format(formatString, reader[i]));
+                    Console.WriteLine(String.Format(formatString, reader.GetName(i)));
+                }
+                //Console.WriteLine("CO TO JEST"+String.Format("{0} {1} {2} {3}", reader[0], reader[1], reader[2], reader[3]));
+            }
+
+            _connection.Dispose();
+
+
+            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
+            List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
+            if (oneToOneRelationshipsList.Count == 0 && oneToManyRelationshipsList.Count == 0)
+            {
+//                string tableName = _propertiesMapper.getTableName(obj);
+//                List<string> ColumnList = _propertiesMapper.getColumnName(obj);
+//                string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+            }
+            
             return null;
         }
-
+        
         public void update(Object obj, List<Tuple<string, object>> conditions)
         {
             _conditions = conditions;
