@@ -111,10 +111,7 @@ namespace orm.Mapper
                         val = "null";
                         
                     }
-
                 }
-
-
                 list.Add(new Tuple<string, object>(columnName, val));
                 Console.WriteLine(val);
             }

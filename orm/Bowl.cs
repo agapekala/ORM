@@ -8,6 +8,7 @@ namespace orm
     [Table("Bowls")]
     class Bowl
     {
+        [Column("id")]
         [PrimaryKey]
         private int _id { get; set; }
 

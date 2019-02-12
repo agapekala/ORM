@@ -31,20 +31,17 @@ namespace orm
             //conn.Dispose();
 
             //User user1 = new User(18, "John");
-            Person person1 = new Person(1, "Jerz", "Smith");
-            Person person = new Person(4141121, "Arek", "Nowak");
+            Person person1 = new Person(21, "Jerz", "Smith");
+            Person person = new Person(31, "Arek", "Nowak");
             mng.insert(person);
-            var del = new List<Tuple<string, object>> {
-                new Tuple<string, object>( "id", "414111" )
-            };
-            mng.delete(person, del);
+
             
-            Dog dog1 = new Dog(134101);
-            Dog dog2 = new Dog(213401);
-            Bowl bowl1 = new Bowl(51);
-            Bowl bowl2 = new Bowl(515);
-            Bowl bowl3 = new Bowl(5515);
-            Bowl bowl4 = new Bowl(55515);
+            Dog dog1 = new Dog(10);
+            Dog dog2 = new Dog(21);
+            Bowl bowl1 = new Bowl(11);
+            Bowl bowl2 = new Bowl(21);
+            Bowl bowl3 = new Bowl(31);
+            Bowl bowl4 = new Bowl(41);
             // mng.insert(person1);
 
             dog1.setBowl(bowl1);
@@ -55,11 +52,11 @@ namespace orm
             mng.insert(bowl2);
             mng.insert(dog2);
             mng.insert(bowl3);
-
+            mng.delete(dog1);
             var changes = new List<Tuple<string, object>> {
-                new Tuple<string, object>( "id", "30" )
+                new Tuple<string, object>( "id", "310" )
                  };
-            mng.update(dog1, changes);
+            mng.update(dog2, changes);
         }
     }
 }

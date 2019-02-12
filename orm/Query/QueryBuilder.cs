@@ -65,15 +65,13 @@ namespace orm.Query
             {
                 returnQuery += it.Item1 + " ";
                 returnQuery += CsTypesToSql[it.Item2.GetType()] ;
-                if (primaryKey)
-                {
-                    returnQuery += " PRIMARY KEY,   ";
-                    primaryKey = false;
-                }
-                else
-                {
+//                if (primaryKey)
+//                {
+//                    returnQuery += " PRIMARY KEY,   ";
+//                    primaryKey = false;
+//                }
+//                else
                     returnQuery +=  ", ";
-                }
             }
 
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
