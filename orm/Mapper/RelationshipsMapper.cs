@@ -7,10 +7,12 @@ using orm.Attributes;
 
 namespace orm.Mapper
 {
-    class RelationshipsMapper {
+    class RelationshipsMapper
+    {
 
         // TO-DO: Implement findOneToManyRelationships and perhaps merge it with the below function.
-        public List<IRelationship> findOneToOneRelationships(object o) {
+        public List<IRelationship> findOneToOneRelationships(object o)
+        {
             List<IRelationship> listOfRelationships = new List<IRelationship>();
             Type type = o.GetType();
 
@@ -21,14 +23,16 @@ namespace orm.Mapper
                 object[] att = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
                 var val = strGetter.Invoke(o, null);
 
-                if (att.Length != 0) {
+                if (att.Length != 0)
+                {
                     object owner = o;
                     object owned = val;
                     OneToOneRelationship oneToOneRelationship = new OneToOneRelationship(owner, owned);
                     listOfRelationships.Add(oneToOneRelationship);
                 }
             }
-            return listOfRelationships;   
+
+            return listOfRelationships;
         }
 
 

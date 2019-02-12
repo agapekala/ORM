@@ -10,20 +10,20 @@ namespace orm
     {
         [Column("id")]
         [PrimaryKey()]
-        private int _id { get; set; }
+        protected int _id { get; set; }
 
         [Column("imie")]
-        private string _name { get; set; }
+        protected string _name { get; set; }
 
         [Column("nazwisko")]
-        private string _lastname { get; set; }
+        protected string _lastname { get; set; }
 
         [Column("pies")]
         [OneToOne()]
-        private Dog _dog { get; set; }
+        protected Dog _dog { get; set; }
 
         [OneToMany()]
-        private LinkedList <Cat> _cats { get; set; }
+        protected LinkedList <Cat> _cats { get; set; }
 
         public void setDog(Dog dog) {
             _dog = dog;
