@@ -121,8 +121,6 @@ namespace orm
                 
                 IEnumerable e = rel.getOwned() as IEnumerable;
 
-                Console.WriteLine("ZUPAAAA");
-
                 foreach (object child in e) {
                     handleOneToManyRelationships(child, obj);
                 }
