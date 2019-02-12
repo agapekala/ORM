@@ -35,7 +35,15 @@ namespace orm
             Bowl bowl1 = new Bowl(7);
             dog1.setBowl(bowl1);
             person1.setDog(dog1);
-
+            
+            Cat cat1 = new Cat(11);
+            Cat cat2 = new Cat(12);
+            Bowl bowlCat1 = new Bowl(13);
+            Bowl bowlCat2 = new Bowl(14);
+            cat1.setBowl(bowlCat1);
+            cat2.setBowl(bowlCat2);
+            person1.addCat(cat1);
+            person1.addCat(cat2);
             
             mng.insert(person1);
         }

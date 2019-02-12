@@ -63,17 +63,21 @@ namespace orm.Mapper {
                 var val = strGetter.Invoke(obj, null);
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
 
-                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
-                string columnName;
                 if (att.Length == 0)
                 {
+                    continue; // If certain field is not declared as column, skip it.
+                }
+
+                string columnName;
+                ColumnAttribute att1 = (ColumnAttribute)att[0];
+
+                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
+                if (att1.ColumnName == null) {
                     columnName = convertObjectNameToString(prp.Name);
                 }
                 else { 
-                    ColumnAttribute att1 = (ColumnAttribute)att[0];
                     columnName = att1.ColumnName;
                 }
-
 
                 // If this property has an OneToOneAttribute, find forgein key.
                 object[] oneToOneAtt = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
