@@ -17,7 +17,7 @@ namespace orm
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
-            ConnConfiguration conf = new ConnConfiguration("localhost","Testy");
+            ConnConfiguration conf = new ConnConfiguration("localhost","Test");
 
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
