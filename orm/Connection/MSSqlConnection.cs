@@ -34,7 +34,8 @@ namespace orm.Connection
         public void ConnectAndOpen()
         {
             Conn.ConnectionString = _config.creteConnectionString();
-            Console.WriteLine(_config.creteConnectionString());
+            // Console.WriteLine("connandopen "+)
+            Console.WriteLine("conne" + _config.creteConnectionString());
             Conn.Open();
         }
 

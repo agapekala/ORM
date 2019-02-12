@@ -16,7 +16,7 @@ namespace orm
         static void Main(string[] args)
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
-            ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
+            ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
             conn.setConfiguration(conf);
             Manager mng = new Manager(conn);
             //conn.ConnectAndOpen();
@@ -46,7 +46,6 @@ namespace orm
             person1.addCat(cat2);
             
             mng.insert(person1);
-            Console.ReadLine();
         }
     }
 }
