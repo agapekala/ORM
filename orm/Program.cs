@@ -38,6 +38,7 @@ namespace orm
 
             
             mng.insert(person1);
+            Console.ReadLine();
         }
     }
 }
