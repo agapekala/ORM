@@ -51,6 +51,7 @@ namespace orm
             Console.WriteLine("woman dziedziczy po:" + typeof(Woman).BaseType.Name);
 
             mng.insert(person1);
+            Dog d = (Dog) mng.select(typeof(Dog), 10);
         }
     }
 }

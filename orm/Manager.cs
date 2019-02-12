@@ -115,6 +115,16 @@ namespace orm
 
             }
         }
+
+        public object select(Type type, int id)
+        {
+            object obj = Activator.CreateInstance(type);
+            QueryBuilder queryBuilder = new QueryBuilder();
+            object tableName = _propertiesMapper.getTableName(obj);
+            //String query = queryBuilder.createSelectQuery(tableName, id);
+            return null;
+        }
+
         public void update(Object obj, List<Tuple<string, object>> conditions)
         {
             _conditions = conditions;
