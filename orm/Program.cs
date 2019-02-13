@@ -69,7 +69,7 @@ namespace orm
               }
             */
             //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 1);
+            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 3);
             
            /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
             if (cat == null || cat.getId() == null) {

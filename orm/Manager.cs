@@ -213,12 +213,11 @@ namespace orm
                         IList list = Activator.CreateInstance(prp.PropertyType) as IList;
                         Type objectType = list.GetType().GetGenericArguments().Single();
 
-                        Console.WriteLine("typek = "+objectType);
                         List<Criteria> criterias = new List<Criteria>();
-                        criterias.Add(new Criteria("=", nameOfColumnThatRepresentsThisObjectInAnotherTable, id));
+                        Criteria criteria = new Criteria();
+                        criterias.Add(Criteria.equals(nameOfColumnThatRepresentsThisObjectInAnotherTable, id));
                         
                         oneToManyObjectList = (List<object>)select(objectType, criterias);
-                        Console.WriteLine("siema"+oneToManyObjectList);
                         obj = _propertiesMapper.setCertainListField(obj, oneToManyObjectList, prp);
                         
                     }
