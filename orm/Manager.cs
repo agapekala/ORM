@@ -60,15 +60,15 @@ namespace orm
                 //    
 
             }
-            //_connection.ConnectAndOpen();
+            _connection.ConnectAndOpen();
             foreach (string q in _queries)
             {
                 Console.WriteLine(q);
-                // SqlCommand command = _connection.execute(q);
-                // command.ExecuteNonQuery();
+                 SqlCommand command = _connection.execute(q);
+                 command.ExecuteNonQuery();
 
             }
-            //_connection.Dispose();
+            _connection.Dispose();
             _queries.Clear();
 
         }

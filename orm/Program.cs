@@ -17,7 +17,7 @@ namespace orm
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
-            ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
+            ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
@@ -33,6 +33,7 @@ namespace orm
 
             //User user1 = new User(18, "John");
             //Person person1 = new Person(1, "John", "Smith");
+            /*
                         Woman person1 = new Woman(1, "John", "Smith", "czarne");
                         Dog dog1 = new Dog(10);
                         Bowl bowl1 = new Bowl(7);
@@ -48,15 +49,19 @@ namespace orm
                         person1.addCat(cat1);
                         person1.addCat(cat2);
 
-                        //mng.insert(person1);
-            
-            //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Person p = (Person)mng.select(/*typeof(Dog)*/ typeof(Person), 3);
+            //mng.insert(person1);
+
+            Woman p = (Woman)mng.select(typeof(Woman), 1);
             Console.WriteLine("personId = " + p.getId());
             Console.WriteLine("personName = " + p.getName());
             Console.WriteLine("personLastname = " + p.getLastname());
             Console.WriteLine("piesId = " + p.getDog().getId().ToString());
             Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+            Console.WriteLine("Hair = " + p.getHair());
+            */
+            List<object> value =new List<object>() { 1,2,3,4} ;
+            var containedType = typeof(int).GenericTypeArguments.First();
+            value.Select(item => Convert.ChangeType(item, containedType)).ToList();
 
         }
     }
