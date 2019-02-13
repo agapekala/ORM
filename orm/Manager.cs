@@ -10,6 +10,8 @@ using orm.Query;
 using orm.Relationships;
 using System.Linq;
 using System.Collections;
+using orm.Criterias;
+
 
 namespace orm
 {
@@ -117,15 +119,65 @@ namespace orm
         }
 
 
+        public IEnumerable select(Type type, List<Criteria> listOfCriteria) {
+            List<object> result = new List<object>();
 
-        public object select(Type type, object id){
             QueryBuilder queryBuilder = new QueryBuilder();
             object obj = Activator.CreateInstance(type);
 
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
 
-            String query = queryBuilder.createSelectQuery(tableName, id, primaryKeyName);
+            String query = queryBuilder.createSelectQuery(tableName, listOfCriteria);
+            Console.WriteLine(query);
+
+
+            _connection.ConnectAndOpen();
+            SqlCommand command = _connection.execute(query);
+            //command.ExecuteNonQuery();
+            SqlDataReader reader = command.ExecuteReader();
+
+            // Getting all elements that fit the criteria and putting their primary keys into listOfIds.
+            LinkedList<object> listOfIds = new LinkedList<object>();
+            while (reader.Read())
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (reader.GetName(i).ToString() == primaryKeyName) {
+                        listOfIds.AddLast(reader[i]);
+                    }
+                    string formatString = "{0}";
+                    Console.Write(String.Format(formatString, reader[i]));
+                    Console.WriteLine(String.Format(formatString, reader.GetName(i)));
+                }
+            }
+            reader.Close();
+            _connection.Dispose();
+
+
+            // Triggering selectById for every single object that is present in listOfIds.
+            foreach (object id in listOfIds) {
+                result.Add(selectById(type, id));
+            }
+
+            return result; 
+        }
+
+
+        // Selects single object from database basing on its id (primary key).
+        public object selectById(Type type, object id){
+            QueryBuilder queryBuilder = new QueryBuilder();
+            object obj = Activator.CreateInstance(type);
+
+            var nameOfBaseClass = obj.GetType().BaseType;
+            var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
+            string nameOfColumnThatRepresentsThisObjectInAnotherTable = nameOfBaseClassWithoutNamespaces + "Id";
+
+            string tableName = _propertiesMapper.getTableName(obj);
+            string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
+            object primaryKeyValue = _propertiesMapper.findPrimaryKey(obj);
+
+            String query = queryBuilder.createSelectByIdQuery(tableName, id, primaryKeyName);
             Console.WriteLine(query);
 
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
@@ -144,16 +196,32 @@ namespace orm
                 _connection.Dispose();
             }
             else{
-                // Iteracja po wszystkich polach 
-
                 PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
 
                 foreach (PropertyInfo prp in props)
                 {
+                    
                     // OneToOne
                     MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
                     object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
-                    var val = strGetter.Invoke(obj, null);
+                    object[] attOneToMany = prp.GetCustomAttributes(typeof(OneToManyAttribute), false);
+
+                   var val = strGetter.Invoke(obj, null);
+                   if (attOneToMany.Length != 0) {
+
+                        IList oneToManyObjectList = new List<Type>();
+                        IList list = Activator.CreateInstance(prp.PropertyType) as IList;
+                        Type objectType = list.GetType().GetGenericArguments().Single();
+
+                        List<Criteria> criterias = new List<Criteria>();
+                        Criteria criteria = new Criteria();
+                        criterias.Add(Criteria.equals(nameOfColumnThatRepresentsThisObjectInAnotherTable, id));
+                        
+                        oneToManyObjectList = (List<object>)select(objectType, criterias);
+                        obj = _propertiesMapper.setCertainListField(obj, oneToManyObjectList, prp);
+                        
+                    }
+
                     if (attOneToOne.Length == 0)
                     {
                         continue;
@@ -164,12 +232,17 @@ namespace orm
                     
                     object foreignKeyId = _propertiesMapper.getValueOfForeignKey(prp, readerTmp); // readerTmp is closed inside of this function.
                     _connection.Dispose();
+                    // Handles case, when object doesn't exists in database.
+                    if (foreignKeyId == null) {
+                        return null;
+                    }
+                    // Handles case, when object is a null in database.
                     if (foreignKeyId == DBNull.Value) {
                         obj = _propertiesMapper.setCertainField(obj, null, prp);
                         continue;
                     }
 
-                    object mappedObject = select(prp.PropertyType, foreignKeyId);
+                    object mappedObject = selectById(prp.PropertyType, foreignKeyId);
                     obj = _propertiesMapper.setCertainField(obj, mappedObject, prp);
 
                 }

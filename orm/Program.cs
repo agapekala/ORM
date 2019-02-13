@@ -8,6 +8,8 @@ using System.Reflection;
 using orm.Attributes;
 using orm.Mapper;
 using System.Collections.Generic;
+using orm.Criterias;
+
 
 namespace orm
 {
@@ -17,7 +19,7 @@ namespace orm
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
-            ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
+            ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
@@ -33,7 +35,6 @@ namespace orm
 
             //User user1 = new User(18, "John");
             //Person person1 = new Person(1, "John", "Smith");
-            /*
                         Woman person1 = new Woman(1, "John", "Smith", "czarne");
                         Dog dog1 = new Dog(10);
                         Bowl bowl1 = new Bowl(7);
@@ -50,19 +51,51 @@ namespace orm
                         person1.addCat(cat2);
 
             //mng.insert(person1);
+            
+            Criteria.greaterThan("id", 0);
+            Criteria.getListOfCriteria();
 
-            Woman p = (Woman)mng.select(typeof(Woman), 1);
-            Console.WriteLine("personId = " + p.getId());
-            Console.WriteLine("personName = " + p.getName());
-            Console.WriteLine("personLastname = " + p.getLastname());
-            Console.WriteLine("piesId = " + p.getDog().getId().ToString());
-            Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
-            Console.WriteLine("Hair = " + p.getHair());
+            List<Criteria> myCriterias = new List<Criteria>();
+            myCriterias.Add(Criteria.greaterThan("id", 0));
+            //LinkedList<Bowl> woman = (LinkedList<Bowl>)mng.select( typeof(Bowl), Criteria.getListOfCriteria());
+
+            /*IEnumerable<object> woman = (IEnumerable<object>) mng.select( typeof(Woman), myCriterias);
+
+              foreach (Woman w in woman ){
+                  Console.WriteLine("personId = " + w.getId());
+                  Console.WriteLine("personName = " + w.getName());
+                  Console.WriteLine("personLastname = " + w.getLastname());
+                  Console.WriteLine("personHair = " + w.getHair());
+              }
             */
-            List<object> value =new List<object>() { 1,2,3,4} ;
-            var containedType = typeof(int).GenericTypeArguments.First();
-            value.Select(item => Convert.ChangeType(item, containedType)).ToList();
-
+            //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
+            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 3);
+            
+           /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
+            if (cat == null || cat.getId() == null) {
+                Console.WriteLine("is null");
+            }
+            else {
+                Console.WriteLine("catId = " + cat.getId());
+                Console.WriteLine("miskaId = " + cat.getBowl().getId());
+            }
+            */
+            if (p == null || p.getId() == null) {
+                Console.WriteLine("The object doesn't exist.");
+            }
+            else { 
+                Console.WriteLine("personId = " + p.getId());
+                Console.WriteLine("personName = " + p.getName());
+                Console.WriteLine("personLastname = " + p.getLastname());
+                Console.WriteLine("personHair = " + p.getHair());
+                Console.WriteLine("piesId = " + p.getDog().getId().ToString());
+                Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+                foreach (Cat o in p.getCats()) {
+                    Console.WriteLine("catId= " + o.getId());
+                    Console.WriteLine("catsBowlId=" + o.getBowl().getId());
+                }
+                
+            }
         }
     }
 }
