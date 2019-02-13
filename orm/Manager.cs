@@ -12,6 +12,7 @@ using System.Linq;
 using System.Collections;
 using orm.Criterias;
 
+
 namespace orm
 {
     class Manager
@@ -168,8 +169,13 @@ namespace orm
             QueryBuilder queryBuilder = new QueryBuilder();
             object obj = Activator.CreateInstance(type);
 
+            var nameOfBaseClass = obj.GetType().BaseType;
+            var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
+            string nameOfColumnThatRepresentsThisObjectInAnotherTable = nameOfBaseClassWithoutNamespaces + "Id";
+
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
+            object primaryKeyValue = _propertiesMapper.findPrimaryKey(obj);
 
             String query = queryBuilder.createSelectByIdQuery(tableName, id, primaryKeyName);
             Console.WriteLine(query);
@@ -190,16 +196,33 @@ namespace orm
                 _connection.Dispose();
             }
             else{
-                // Iteracja po wszystkich polach 
-
                 PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
 
                 foreach (PropertyInfo prp in props)
                 {
+                    
                     // OneToOne
                     MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
                     object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
-                    var val = strGetter.Invoke(obj, null);
+                    object[] attOneToMany = prp.GetCustomAttributes(typeof(OneToManyAttribute), false);
+
+                   var val = strGetter.Invoke(obj, null);
+                   if (attOneToMany.Length != 0) {
+
+                        IList oneToManyObjectList = new List<Type>();
+                        IList list = Activator.CreateInstance(prp.PropertyType) as IList;
+                        Type objectType = list.GetType().GetGenericArguments().Single();
+
+                        Console.WriteLine("typek = "+objectType);
+                        List<Criteria> criterias = new List<Criteria>();
+                        criterias.Add(new Criteria("=", nameOfColumnThatRepresentsThisObjectInAnotherTable, id));
+                        
+                        oneToManyObjectList = (List<object>)select(objectType, criterias);
+                        Console.WriteLine("siema"+oneToManyObjectList);
+                        obj = _propertiesMapper.setCertainListField(obj, oneToManyObjectList, prp);
+                        
+                    }
+
                     if (attOneToOne.Length == 0)
                     {
                         continue;

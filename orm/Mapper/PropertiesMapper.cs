@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using orm.Attributes;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Collections;
 
 namespace orm.Mapper
 {
@@ -282,6 +284,16 @@ namespace orm.Mapper
             }
 
             return obj;
+        }
+
+        public object setCertainListField(object parent, object children, PropertyInfo prp) {
+            IList childTmp = children as IList;
+            IList list = Activator.CreateInstance(prp.PropertyType) as IList;
+            foreach (var it in childTmp) {
+                list.Add(it);
+            }
+            prp.SetValue(parent, list, null);
+            return parent; 
         }
 
         public object setCertainField(object parent, object child, PropertyInfo prp) {

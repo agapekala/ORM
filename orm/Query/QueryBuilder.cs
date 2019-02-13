@@ -121,13 +121,13 @@ namespace orm.Query
         }
 
         public string createSelectQuery(string tablename, List<Criteria> listOfCriterias) {
-            string query = "SELECT * FROM " + tablename + generateWhereClause();
+            string query = "SELECT * FROM " + tablename + generateWhereClause(listOfCriterias);
             return query;
         }
 
-        public string generateWhereClause() {
+        public string generateWhereClause(List<Criteria> listOfCriterias) {
             string whereClause = " WHERE ";
-            foreach (Criteria c in Criteria.getListOfCriteria()) {
+            foreach (Criteria c in listOfCriterias) {
                 whereClause += c.generateString() + " AND ";
             }
             whereClause = whereClause.Remove(whereClause.Length - 5);

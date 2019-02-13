@@ -54,20 +54,32 @@ namespace orm
             
             Criteria.greaterThan("id", 0);
             Criteria.getListOfCriteria();
+
+            List<Criteria> myCriterias = new List<Criteria>();
+            myCriterias.Add(Criteria.greaterThan("id", 0));
             //LinkedList<Bowl> woman = (LinkedList<Bowl>)mng.select( typeof(Bowl), Criteria.getListOfCriteria());
 
-            IEnumerable<object> woman = (IEnumerable<object>) mng.select( typeof(Woman), Criteria.getListOfCriteria());
+            /*IEnumerable<object> woman = (IEnumerable<object>) mng.select( typeof(Woman), myCriterias);
 
-            foreach (Woman w in woman ){
-                Console.WriteLine("personId = " + w.getId());
-                Console.WriteLine("personName = " + w.getName());
-                Console.WriteLine("personLastname = " + w.getLastname());
-                Console.WriteLine("personHair = " + w.getHair());
-            }
-
+              foreach (Woman w in woman ){
+                  Console.WriteLine("personId = " + w.getId());
+                  Console.WriteLine("personName = " + w.getName());
+                  Console.WriteLine("personLastname = " + w.getLastname());
+                  Console.WriteLine("personHair = " + w.getHair());
+              }
+            */
             //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 2);
-
+            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 1);
+            
+           /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
+            if (cat == null || cat.getId() == null) {
+                Console.WriteLine("is null");
+            }
+            else {
+                Console.WriteLine("catId = " + cat.getId());
+                Console.WriteLine("miskaId = " + cat.getBowl().getId());
+            }
+            */
             if (p == null || p.getId() == null) {
                 Console.WriteLine("The object doesn't exist.");
             }
@@ -78,6 +90,11 @@ namespace orm
                 Console.WriteLine("personHair = " + p.getHair());
                 Console.WriteLine("piesId = " + p.getDog().getId().ToString());
                 Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+                foreach (Cat o in p.getCats()) {
+                    Console.WriteLine("catId= " + o.getId());
+                    Console.WriteLine("catsBowlId=" + o.getBowl().getId());
+                }
+                
             }
         }
     }
