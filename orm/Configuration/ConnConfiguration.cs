@@ -32,6 +32,12 @@ namespace orm.Configuration
            // _password = pass;
         }
 
+        public ConnConfiguration(String server, String db)
+        {
+            _serverName = server;
+            _databaseName = db;
+        }
+
         public ConnConfiguration ServerName(string serverName)
         {
             this._serverName = serverName;
@@ -53,8 +59,15 @@ namespace orm.Configuration
 
         public String creteConnectionString()
         {
+            return "Data Source=" + _serverName + ";Initial Catalog=" + _databaseName + ";Integrated Security=True";
+
+        }
+
+/*        public String creteConnectionString()
+        {
             return "Server=" + _serverName + ";Database=" + _databaseName + ";User Id=" +
                    _userId + ";Password=" + _password + ";MultipleActiveResultSets=true;";
         }
+ */
     }
 }

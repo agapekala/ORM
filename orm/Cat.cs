@@ -26,5 +26,15 @@ namespace orm
         {
             this._id = id;
         }
+
+        public Bowl getBowl() {
+            return _bowl;
+        }
+
+        public int getId() {
+            return _id;
+        }
+
+        public Cat() { }
     }
 }

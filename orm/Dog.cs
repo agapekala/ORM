@@ -8,7 +8,7 @@ namespace orm
     class Dog
     {
         [Column("id")]
-        [PrimaryKey]
+        [PrimaryKey()]
         protected int _id { get; set; }
 
         [Column("miska")]
@@ -20,10 +20,20 @@ namespace orm
             _bowl = bowl;
         }
 
+        public Bowl getBowl() {
+            return _bowl;
+        }
         public Dog(int id, Bowl bowl = null)
         {
             _id = id;
             _bowl = bowl;
         }
+
+        public int getId() {
+            return _id;
+        }
+
+        public Dog() { }
+
     }
 }

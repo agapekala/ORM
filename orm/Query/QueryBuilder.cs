@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using orm.Relationships;
+using orm.Criterias;
 
 namespace orm.Query
 {
@@ -24,7 +25,6 @@ namespace orm.Query
             
             foreach (Tuple<string, object> it in columns)
             {
-                Console.WriteLine(it.Item1 + ", "+ it.Item2);
                 if (it.Item2.GetType() == typeof(string))
                 {
                     if (it.Item2.Equals("null"))
@@ -81,10 +81,10 @@ namespace orm.Query
 
             return returnQuery;
         }
-        public string createUpdateQuery(string tableName, List<Tuple<string, object>> columns, List<Tuple<string, object>> conditions)
+        public string createUpdateQuery(string tableName, List<Tuple<string, object>> valuesToSet, List<Criteria> criterias)
         {
             string returnQuery = "UPDATE " + tableName + " SET ";
-            foreach (Tuple<string, object> it in conditions)
+            foreach (Tuple<string, object> it in valuesToSet)
             {
                 returnQuery += it.Item1 + "=";
                 if (it.Item2.GetType() == typeof(string))
@@ -97,22 +97,34 @@ namespace orm.Query
                 }
             }
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
-            returnQuery += " WHERE ";
-            Tuple<string, object> first = columns[0];
-            returnQuery += first.Item1 + "=";
-            returnQuery += first.Item2 + ";";
+            returnQuery += generateWhereClause(criterias);
             return returnQuery;
         }
         
-        public string createDeleteQuery(string tableName, List<Tuple<string, object>> columns)
+        public string createDeleteQuery(string tableName, List<Criteria> listOfCriterias)
         {
-            string returnQuery = "DELETE FROM " + tableName ;
+            string query = "DELETE FROM " + tableName + generateWhereClause(listOfCriterias);
+            return query;
+        }
 
-            returnQuery += " WHERE ";
-            Tuple<string, object> first = columns[0];
-            returnQuery += first.Item1 + "=";
-            returnQuery += first.Item2 + ";";
-            return returnQuery;
+        public string createSelectByIdQuery(string tableName, object id, string primaryKeyName) {
+            string result = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + primaryKeyName + "="+ id +";";
+            return result;
+        }
+
+        public string createSelectQuery(string tablename, List<Criteria> listOfCriterias) {
+            string query = "SELECT * FROM " + tablename + generateWhereClause(listOfCriterias);
+            return query;
+        }
+
+        public string generateWhereClause(List<Criteria> listOfCriterias) {
+            string whereClause = " WHERE ";
+            foreach (Criteria c in listOfCriterias) {
+                whereClause += c.generateString() + " AND ";
+            }
+            whereClause = whereClause.Remove(whereClause.Length - 5);
+            whereClause += ";";
+            return whereClause;
         }
 
     }
