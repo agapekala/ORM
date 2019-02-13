@@ -21,5 +21,7 @@ namespace orm
         {
             return this.hair;
         }
+
+        public Woman() :base() { }
     }
 }
