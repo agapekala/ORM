@@ -234,15 +234,14 @@ namespace orm
                     string colName="";
                     foreach (ColumnAttribute o in attColumn)
                     {
-                        
                         if (o.ColumnName == null)
                         {
                             colName = _propertiesMapper.convertObjectNameToString(prp.Name);
                         }else
+
                         {
                             colName = o.ColumnName;
                         }
-
                     }
 
                     for (int it = 0; it < _valuesToSet.Count(); it++)
@@ -256,20 +255,10 @@ namespace orm
                     }
                 }
 
-                var val = strGetter.Invoke(obj, null);
-               
+                var val = strGetter.Invoke(obj, null);  
             }
-
-                foreach (OneToOneRelationship r in oneToOneRelationshipsList)
-            {
-                var rel = r.getOwned();
-                //string relTableName = _propertiesMapper.;
-            }
-
 
             QueryBuilder query = new QueryBuilder();
-            //            if (oneToOneRelationshipsList.Count == 0)
-            //            {
             string tableName = _propertiesMapper.getTableName(obj);
             List<string> ColumnList = _propertiesMapper.getColumnName(obj);
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
