@@ -17,8 +17,7 @@ namespace orm
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
-            ConnConfiguration conf = new ConnConfiguration("localhost","Test");
-
+            //ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
@@ -33,22 +32,32 @@ namespace orm
             //conn.Dispose();
 
             //User user1 = new User(18, "John");
-            Person person1 = new Person(1, "John", "Smith");
-            Dog dog1 = new Dog(10);
-            Bowl bowl1 = new Bowl(7);
-            dog1.setBowl(bowl1);
-            person1.setDog(dog1);
+            //Person person1 = new Person(1, "John", "Smith");
+                        Woman person1 = new Woman(1, "John", "Smith", "czarne");
+                        Dog dog1 = new Dog(10);
+                        Bowl bowl1 = new Bowl(7);
+                        dog1.setBowl(bowl1);
+                        person1.setDog(dog1);
 
-            Cat cat1 = new Cat(11);
-            Cat cat2 = new Cat(12);
-            Bowl bowlCat1 = new Bowl(13);
-            Bowl bowlCat2 = new Bowl(14);
-            cat1.setBowl(bowlCat1);
-            cat2.setBowl(bowlCat2);
-            person1.addCat(cat1);
-            person1.addCat(cat2);
+                        Cat cat1 = new Cat(11);
+                        Cat cat2 = new Cat(12);
+                        Bowl bowlCat1 = new Bowl(13);
+                        Bowl bowlCat2 = new Bowl(14);
+                        cat1.setBowl(bowlCat1);
+                        cat2.setBowl(bowlCat2);
+                        person1.addCat(cat1);
+                        person1.addCat(cat2);
 
-            mng.insert(person1);
+                        //mng.insert(person1);
+            
+            //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
+            Person p = (Person)mng.select(/*typeof(Dog)*/ typeof(Person), 3);
+            Console.WriteLine("personId = " + p.getId());
+            Console.WriteLine("personName = " + p.getName());
+            Console.WriteLine("personLastname = " + p.getLastname());
+            Console.WriteLine("piesId = " + p.getDog().getId().ToString());
+            Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+
         }
     }
 }
