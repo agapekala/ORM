@@ -258,6 +258,7 @@ namespace orm
 
                 var val = strGetter.Invoke(obj, null);
                
+
             }
 
                 foreach (OneToOneRelationship r in oneToOneRelationshipsList)
