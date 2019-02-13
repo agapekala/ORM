@@ -8,6 +8,8 @@ using System.Reflection;
 using orm.Attributes;
 using orm.Mapper;
 using System.Collections.Generic;
+using orm.Criterias;
+
 
 namespace orm
 {
@@ -48,16 +50,35 @@ namespace orm
                         person1.addCat(cat1);
                         person1.addCat(cat2);
 
-                        //mng.insert(person1);
+            //mng.insert(person1);
             
-            //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Person p = (Person)mng.select(/*typeof(Dog)*/ typeof(Person), 3);
-            Console.WriteLine("personId = " + p.getId());
-            Console.WriteLine("personName = " + p.getName());
-            Console.WriteLine("personLastname = " + p.getLastname());
-            Console.WriteLine("piesId = " + p.getDog().getId().ToString());
-            Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+            Criteria.greaterThan("id", 0);
+            Criteria.getListOfCriteria();
+            //LinkedList<Bowl> woman = (LinkedList<Bowl>)mng.select( typeof(Bowl), Criteria.getListOfCriteria());
 
+            IEnumerable<object> woman = (IEnumerable<object>) mng.select( typeof(Woman), Criteria.getListOfCriteria());
+
+            foreach (Woman w in woman ){
+                Console.WriteLine("personId = " + w.getId());
+                Console.WriteLine("personName = " + w.getName());
+                Console.WriteLine("personLastname = " + w.getLastname());
+                Console.WriteLine("personHair = " + w.getHair());
+            }
+
+            //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
+            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 2);
+
+            if (p == null || p.getId() == null) {
+                Console.WriteLine("The object doesn't exist.");
+            }
+            else { 
+                Console.WriteLine("personId = " + p.getId());
+                Console.WriteLine("personName = " + p.getName());
+                Console.WriteLine("personLastname = " + p.getLastname());
+                Console.WriteLine("personHair = " + p.getHair());
+                Console.WriteLine("piesId = " + p.getDog().getId().ToString());
+                Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
+            }
         }
     }
 }

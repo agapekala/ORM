@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using orm.Relationships;
+using orm.Criterias;
 
 namespace orm.Query
 {
@@ -114,9 +115,24 @@ namespace orm.Query
             return returnQuery;
         }
 
-        public string createSelectQuery(string tableName, object id, string primaryKeyName) {
+        public string createSelectByIdQuery(string tableName, object id, string primaryKeyName) {
             string result = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + primaryKeyName + "="+ id +";";
             return result;
+        }
+
+        public string createSelectQuery(string tablename, List<Criteria> listOfCriterias) {
+            string query = "SELECT * FROM " + tablename + generateWhereClause();
+            return query;
+        }
+
+        public string generateWhereClause() {
+            string whereClause = " WHERE ";
+            foreach (Criteria c in Criteria.getListOfCriteria()) {
+                whereClause += c.generateString() + " AND ";
+            }
+            whereClause = whereClause.Remove(whereClause.Length - 5);
+            whereClause += ";";
+            return whereClause;
         }
 
     }

@@ -211,6 +211,9 @@ namespace orm.Mapper
         public object getValueOfForeignKey(PropertyInfo prp, SqlDataReader reader) {
             Dictionary<string, object> columnNameAndItsValue = createDictionaryFromTable(reader);
             reader.Close();
+            if (columnNameAndItsValue.Count == 0) {
+                return null;
+            }
             object[] attColumn = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
             if (attColumn.Length == 0)
             {
