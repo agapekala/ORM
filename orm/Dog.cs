@@ -20,12 +20,20 @@ namespace orm
             _bowl = bowl;
         }
 
+        public Bowl getBowl() {
+            return _bowl;
+        }
         public Dog(int id, Bowl bowl = null)
         {
             _id = id;
             _bowl = bowl;
         }
 
+        public int getId() {
+            return _id;
+        }
+
         public Dog() { }
+
     }
 }

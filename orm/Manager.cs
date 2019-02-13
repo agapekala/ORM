@@ -32,7 +32,7 @@ namespace orm
         public void insert(Object obj)
         {
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
-            object primarKey = columnsAndValuesList[0].Item2; //TO DO: exception that henadles when trying to add id that already exists
+            object primarKey = _propertiesMapper.findPrimaryKey(obj); //TO DO: exception that henadles when trying to add id that already exists
             Console.WriteLine(("pk:   " + primarKey));
 
 
@@ -64,8 +64,8 @@ namespace orm
             foreach (string q in _queries)
             {
                 Console.WriteLine(q);
-               // SqlCommand command = _connection.execute(q);
-               // command.ExecuteNonQuery();
+                // SqlCommand command = _connection.execute(q);
+                // command.ExecuteNonQuery();
 
             }
             //_connection.Dispose();
@@ -116,9 +116,11 @@ namespace orm
             }
         }
 
-        public object select(/*Type type*/ object obj, int id)
-        {
+
+
+        public object select(Type type, object id){
             QueryBuilder queryBuilder = new QueryBuilder();
+            object obj = Activator.CreateInstance(type);
 
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
@@ -126,34 +128,61 @@ namespace orm
             String query = queryBuilder.createSelectQuery(tableName, id, primaryKeyName);
             Console.WriteLine(query);
 
-            // Executing single select query. 
-            _connection.ConnectAndOpen();
-            SqlCommand command = _connection.execute(query);
-            //command.ExecuteNonQuery();
-            SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                for (int i=0; i<reader.FieldCount; i++) {
-                    string formatString = "{0}";
-                    Console.Write(String.Format(formatString, reader[i]));
-                    Console.WriteLine(String.Format(formatString, reader.GetName(i)));
-                }
-                //Console.WriteLine("CO TO JEST"+String.Format("{0} {1} {2} {3}", reader[0], reader[1], reader[2], reader[3]));
-            }
-
-            _connection.Dispose();
-
-
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
             List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
+            
             if (oneToOneRelationshipsList.Count == 0 && oneToManyRelationshipsList.Count == 0)
             {
-//                string tableName = _propertiesMapper.getTableName(obj);
-//                List<string> ColumnList = _propertiesMapper.getColumnName(obj);
-//                string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+
+                // Wywołanie pojedyncznego selecta i podpisanie wszystkich typów generycznych.
+                // TO-DO: Przerzucić connection.
+                _connection.ConnectAndOpen();
+                SqlCommand command = _connection.execute(query);
+                //command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                var mappedObject = _propertiesMapper.mapTableIntoObject(obj, reader);
+                _connection.Dispose();
             }
-            
-            return null;
+            else{
+                // Iteracja po wszystkich polach 
+
+                PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (PropertyInfo prp in props)
+                {
+                    // OneToOne
+                    MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
+                    object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
+                    var val = strGetter.Invoke(obj, null);
+                    if (attOneToOne.Length == 0)
+                    {
+                        continue;
+                    }
+                    _connection.ConnectAndOpen();
+                    SqlCommand commandTmp = _connection.execute(query);
+                    SqlDataReader readerTmp = commandTmp.ExecuteReader();
+                    
+                    object foreignKeyId = _propertiesMapper.getValueOfForeignKey(prp, readerTmp); // readerTmp is closed inside of this function.
+                    _connection.Dispose();
+                    if (foreignKeyId == DBNull.Value) {
+                        obj = _propertiesMapper.setCertainField(obj, null, prp);
+                        continue;
+                    }
+
+                    object mappedObject = select(prp.PropertyType, foreignKeyId);
+                    obj = _propertiesMapper.setCertainField(obj, mappedObject, prp);
+
+                }
+                _connection.ConnectAndOpen();
+                SqlCommand command = _connection.execute(query);
+                //command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                obj = _propertiesMapper.mapTableIntoObject(obj, reader); // Reader is closed inside of this function.
+                _connection.Dispose();
+            }
+
+            // Executing single select query. 
+            return obj;
         }
         
         public void update(Object obj, List<Tuple<string, object>> conditions)
@@ -292,8 +321,6 @@ namespace orm
             var containedType = type.GenericTypeArguments.First();
             return value.Select(item => Convert.ChangeType(item, containedType)).ToList();
         }
-
-
 
     }
 }

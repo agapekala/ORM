@@ -114,8 +114,8 @@ namespace orm.Query
             return returnQuery;
         }
 
-        public string createSelectQuery(string tableName, int id, string primaryKeyName) {
-            string result = "SELECT * FROM " + tableName + " WHERE " + primaryKeyName + "="+ id +";";
+        public string createSelectQuery(string tableName, object id, string primaryKeyName) {
+            string result = "SELECT * FROM " + tableName + " WHERE " + tableName + "." + primaryKeyName + "="+ id +";";
             return result;
         }
 

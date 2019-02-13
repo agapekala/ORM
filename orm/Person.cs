@@ -22,7 +22,7 @@ namespace orm
         [OneToOne()]
         protected Dog _dog { get; set; }
 
-        [OneToMany()]
+        //[OneToMany()]
         protected LinkedList<Cat> _cats { get; set; }
 
         public void setDog(Dog dog)
@@ -30,6 +30,22 @@ namespace orm
             _dog = dog;
         }
 
+        public Dog getDog()
+        {
+            return _dog;
+        }
+
+        public string getName() {
+            return _name;
+        }
+
+        public string getLastname() {
+            return _lastname;
+        }
+
+        public int getId() {
+            return _id;
+        }
         public void setCats(LinkedList<Cat> cats)
         {
             if (_cats == null)

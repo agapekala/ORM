@@ -17,5 +17,11 @@ namespace orm
             _id = id;
         }
 
+        public int getId() {
+            return _id;
+        }
+
+        public Bowl() {
+        }
     }
 }
