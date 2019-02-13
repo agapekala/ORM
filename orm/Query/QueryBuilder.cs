@@ -81,10 +81,10 @@ namespace orm.Query
 
             return returnQuery;
         }
-        public string createUpdateQuery(string tableName, List<Tuple<string, object>> columns, List<Tuple<string, object>> conditions)
+        public string createUpdateQuery(string tableName, List<Tuple<string, object>> valuesToSet, List<Criteria> criterias)
         {
             string returnQuery = "UPDATE " + tableName + " SET ";
-            foreach (Tuple<string, object> it in conditions)
+            foreach (Tuple<string, object> it in valuesToSet)
             {
                 returnQuery += it.Item1 + "=";
                 if (it.Item2.GetType() == typeof(string))
@@ -97,22 +97,14 @@ namespace orm.Query
                 }
             }
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
-            returnQuery += " WHERE ";
-            Tuple<string, object> first = columns[0];
-            returnQuery += first.Item1 + "=";
-            returnQuery += first.Item2 + ";";
+            returnQuery += generateWhereClause(criterias);
             return returnQuery;
         }
         
-        public string createDeleteQuery(string tableName, List<Tuple<string, object>> columns)
+        public string createDeleteQuery(string tableName, List<Criteria> listOfCriterias)
         {
-            string returnQuery = "DELETE FROM " + tableName ;
-
-            returnQuery += " WHERE ";
-            Tuple<string, object> first = columns[0];
-            returnQuery += first.Item1 + "=";
-            returnQuery += first.Item2 + ";";
-            return returnQuery;
+            string query = "DELETE FROM " + tableName + generateWhereClause(listOfCriterias);
+            return query;
         }
 
         public string createSelectByIdQuery(string tableName, object id, string primaryKeyName) {

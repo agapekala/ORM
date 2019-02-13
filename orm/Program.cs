@@ -19,7 +19,7 @@ namespace orm
         {
             MSSqlConnection conn = MSSqlConnection.GetInstance();
             //ConnConfiguration conf = new ConnConfiguration("localhost", "tmp", "SA", "Cezarypazura1");
-            ConnConfiguration conf = new ConnConfiguration("KAROLINA-PC\\SQLEXPRESS", "Test");
+            ConnConfiguration conf = new ConnConfiguration("DESKTOP-OP36O3L\\SQLEXPRESS", "Test");
             conn.setConfiguration(conf);
             // conn.ConnectAndOpen();
             Manager mng = new Manager(conn);
@@ -69,33 +69,48 @@ namespace orm
               }
             */
             //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 3);
-            
-           /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
-            if (cat == null || cat.getId() == null) {
-                Console.WriteLine("is null");
-            }
-            else {
-                Console.WriteLine("catId = " + cat.getId());
-                Console.WriteLine("miskaId = " + cat.getBowl().getId());
-            }
-            */
-            if (p == null || p.getId() == null) {
+            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 1);
+
+            /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
+             if (cat == null || cat.getId() == null) {
+                 Console.WriteLine("is null");
+             }
+             else {
+                 Console.WriteLine("catId = " + cat.getId());
+                 Console.WriteLine("miskaId = " + cat.getBowl().getId());
+             }
+             */
+            if (p == null || p.getId() == null)
+            {
                 Console.WriteLine("The object doesn't exist.");
             }
-            else { 
+            else
+            {
                 Console.WriteLine("personId = " + p.getId());
                 Console.WriteLine("personName = " + p.getName());
                 Console.WriteLine("personLastname = " + p.getLastname());
                 Console.WriteLine("personHair = " + p.getHair());
                 Console.WriteLine("piesId = " + p.getDog().getId().ToString());
                 Console.WriteLine("bowlId = " + p.getDog().getBowl().getId());
-                foreach (Cat o in p.getCats()) {
+
+                foreach (Cat o in p.getCats())
+                {
+
                     Console.WriteLine("catId= " + o.getId());
                     Console.WriteLine("catsBowlId=" + o.getBowl().getId());
                 }
-                
+
             }
+
+            List<Criteria> criterias = new List<Criteria>();
+            criterias.Add(Criteria.equals("id", 1));
+            //mng.delete(typeof(Cat), criterias);
+
+            Dog b = new Dog(10);
+            var changes = new List<Tuple<string, object>> { new Tuple<string, object>("pies", b),
+                new Tuple<string, object>("wlosy", "blond") };
+            mng.update(typeof(Woman), changes ,criterias);
+
         }
     }
 }
