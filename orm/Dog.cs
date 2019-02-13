@@ -25,5 +25,11 @@ namespace orm
             _id = id;
             _bowl = bowl;
         }
+
+        public Dog()
+        {
+            _id = 0;
+            _bowl = null;
+        }
     }
 }

@@ -119,6 +119,11 @@ namespace orm
         public object select(Type type, int id)
         {
             object obj = Activator.CreateInstance(type);
+            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
+            List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
+            List<string> propertiesList = _propertiesMapper.getColumnName(obj);
+            //object pk = _propertiesMapper.findPrimaryKey(obj);
+
             QueryBuilder queryBuilder = new QueryBuilder();
             object tableName = _propertiesMapper.getTableName(obj);
             //String query = queryBuilder.createSelectQuery(tableName, id);
