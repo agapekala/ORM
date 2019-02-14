@@ -58,29 +58,30 @@ namespace orm.Query
         };
 
 
-        public string createCreateTableQuery(string tableName, List<Tuple<string, object>> columns)
+        public string createCreateTableQuery(string tableName, List<Tuple<string, object>> columns, object primaryKey)
         {
-            string returnQuery = "DROP TABLE IF EXISTS " + tableName + ";";
-            returnQuery += "CREATE TABLE " + tableName + "(";
-            Boolean primaryKey = true;
+            string returnQuery = "IF NOT EXISTS ( SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo." + tableName + "') and TYPE in (N'U')) BEGIN";
+            returnQuery += " CREATE TABLE " + tableName + "(";
+
             foreach (Tuple<string, object> it in columns)
             {
                 returnQuery += it.Item1 + " ";
                 returnQuery += CsTypesToSql[it.Item2.GetType()] ;
-//                if (primaryKey)
-//                {
-//                    returnQuery += " PRIMARY KEY,   ";
-//                    primaryKey = false;
-//                }
-//                else
+                if (primaryKey.Equals(it.Item1))
+                {
+                    returnQuery += " PRIMARY KEY,   ";
+                    //primaryKey = false;
+                }
+                else
                     returnQuery +=  ", ";
             }
 
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
-            returnQuery += ");";
+            returnQuery += ") END;";
 
             return returnQuery;
         }
+
         public string createUpdateQuery(string tableName, List<Tuple<string, object>> valuesToSet, List<Criteria> criterias)
         {
             string returnQuery = "UPDATE " + tableName + " SET ";

@@ -33,18 +33,22 @@ namespace orm
 
         public void insert(Object obj)
         {
+
+
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
             object primarKey = _propertiesMapper.findPrimaryKey(obj); //TO DO: exception that henadles when trying to add id that already exists
-            //Console.WriteLine(("pk:   " + primarKey));
+            object primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
 
 
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
             List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
+            string tableName = _propertiesMapper.getTableName(obj);
 
             QueryBuilder query = new QueryBuilder();
+
             if (oneToOneRelationshipsList.Count == 0 && oneToManyRelationshipsList.Count == 0)
             {
-                string tableName = _propertiesMapper.getTableName(obj);
+                
                 List<string> ColumnList = _propertiesMapper.getColumnName(obj);
                 //                    string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
                 string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
@@ -62,10 +66,12 @@ namespace orm
                 //    
 
             }
+
             _connection.ConnectAndOpen();
+
             foreach (string q in _queries)
             {
-                Console.WriteLine(q);
+                //Console.WriteLine(q);
                  SqlCommand command = _connection.execute(q);
                  command.ExecuteNonQuery();
 
@@ -210,7 +216,6 @@ namespace orm
                 _connection.Dispose();
             }
 
-            // Executing single select query. 
             return obj;
         }
         
@@ -227,6 +232,7 @@ namespace orm
             foreach (PropertyInfo prp in props)
             {
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
+                object[] attOneToMany = prp.GetCustomAttributes(typeof(OneToManyAttribute), false);
                 object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
                 object[] attColumn = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
 
@@ -237,9 +243,7 @@ namespace orm
                         if (o.ColumnName == null)
                         {
                             colName = _propertiesMapper.convertObjectNameToString(prp.Name);
-                        }else
-
-                        {
+                        }else{
                             colName = o.ColumnName;
                         }
                     }
@@ -254,6 +258,14 @@ namespace orm
                         }
                     }
                 }
+                /*
+                if (attOneToMany.Count() > 0)
+                {
+                    IList list = Activator.CreateInstance(prp.PropertyType) as IList;
+                    Type objectType = list.GetType().GetGenericArguments().Single();
+
+                }
+                */
 
                 var val = strGetter.Invoke(obj, null);  
             }
@@ -389,5 +401,22 @@ namespace orm
             return value.Select(item => Convert.ChangeType(item, containedType)).ToList();
         }
 
+        public void createTable(object obj)
+        {
+            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
+
+            List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
+            object primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
+            QueryBuilder q = new QueryBuilder();
+            string tableName = _propertiesMapper.getTableName(obj);
+            
+            string query = q.createCreateTableQuery(tableName, columnsAndValuesList, primaryKeyName);
+
+            _connection.ConnectAndOpen();
+            SqlCommand command = _connection.execute(query);
+            command.ExecuteNonQuery();
+            _connection.Dispose();
+
+        }
     }
 }

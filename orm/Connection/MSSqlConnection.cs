@@ -10,6 +10,7 @@ namespace orm.Connection
         private SqlConnection Conn { get; }
         private ConnConfiguration _config;
 
+       
 
         private MSSqlConnection()
         {
@@ -25,6 +26,7 @@ namespace orm.Connection
         {
             return Instance;
         }
+
 
         public void setConfiguration(ConnConfiguration config)
         {

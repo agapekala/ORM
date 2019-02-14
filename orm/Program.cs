@@ -10,6 +10,8 @@ using orm.Mapper;
 using System.Collections.Generic;
 using orm.Criterias;
 
+using orm.Query;
+
 
 namespace orm
 {
@@ -35,7 +37,13 @@ namespace orm
 
             //User user1 = new User(18, "John");
             //Person person1 = new Person(1, "John", "Smith");
-                        Woman person1 = new Woman(1, "John", "Smith", "czarne");
+
+            Bowl bowl = new Bowl(13);
+            mng.createTable(bowl);
+
+
+
+            Person person1 = new Person(1, "John", "Smith");
                         Dog dog1 = new Dog(10);
                         Bowl bowl1 = new Bowl(7);
                         dog1.setBowl(bowl1);
@@ -69,7 +77,8 @@ namespace orm
               }
             */
             //Dog d = (Dog) mng.select(/*typeof(Dog)*/ typeof(Dog), 10);
-            Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 1);
+
+            //Woman p = (Woman)mng.selectById(/*typeof(Dog)*/ typeof(Woman), 1);
 
             /* Cat cat = (Cat)mng.selectById(typeof(Cat), 11);
              if (cat == null || cat.getId() == null) {
@@ -79,7 +88,7 @@ namespace orm
                  Console.WriteLine("catId = " + cat.getId());
                  Console.WriteLine("miskaId = " + cat.getBowl().getId());
              }
-             */
+             
             if (p == null || p.getId() == null)
             {
                 Console.WriteLine("The object doesn't exist.");
@@ -101,16 +110,19 @@ namespace orm
                 }
 
             }
+            */
 
             List<Criteria> criterias = new List<Criteria>();
             criterias.Add(Criteria.equals("id", 1));
             //mng.delete(typeof(Cat), criterias);
 
             Dog b = new Dog(10);
-            var changes = new List<Tuple<string, object>> { new Tuple<string, object>("pies", b),
+            var changes = new List<Tuple<string, object>> { new Tuple<string, object>("pies", 12),
                 new Tuple<string, object>("wlosy", "blond") };
-            mng.update(typeof(Woman), changes ,criterias);
+            // mng.update(typeof(Woman), changes ,criterias);
 
+            
+            
         }
     }
 }
