@@ -60,12 +60,13 @@ namespace orm.Configuration
             return "Data Source=" + _serverName + ";Initial Catalog=" + _databaseName + ";Integrated Security=True";
 
         }
-
-/*        public String creteConnectionString()
+        
+        /*
+        public String creteConnectionString()
         {
             return "Server=" + _serverName + ";Database=" + _databaseName + ";User Id=" +
                    _userId + ";Password=" + _password + ";MultipleActiveResultSets=true;";
         }
- */
+        */
     }
 }

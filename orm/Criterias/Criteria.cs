@@ -9,12 +9,6 @@ namespace orm.Criterias
         private string sqlOperator;
         protected string field;
         protected object value;
-        public static List<Criteria> listOfCriteria = new List<Criteria>();
-
-
-        public static List<Criteria> getListOfCriteria (){
-            return listOfCriteria;
-        }
 
         public Criteria(string sqlOperator, string field, object value)
         {
@@ -26,25 +20,21 @@ namespace orm.Criterias
         public static Criteria greaterThan(string fieldName, object value)
         {
             Criteria criteria=new Criteria(">", fieldName, value);
-            listOfCriteria.Add(criteria);
             return criteria;
         }        
         public static Criteria lessThan(string fieldName, object value)
         {
             Criteria criteria=new Criteria("<", fieldName, value);
-            listOfCriteria.Add(criteria);
             return criteria;
         }        
         public static Criteria equals(string fieldName, object value)
         {
             Criteria criteria=new Criteria("=", fieldName, value);
-               listOfCriteria.Add(criteria);
             return criteria;
         }        
         public static Criteria notEquals(string fieldName, object value)
         {
             Criteria criteria=new Criteria("!=", fieldName, value);
-            listOfCriteria.Add(criteria);
             return criteria;
         }      
         public string generateString()

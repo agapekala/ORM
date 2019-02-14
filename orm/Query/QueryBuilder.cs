@@ -10,16 +10,15 @@ namespace orm.Query
     {
 
         public QueryBuilder() { }
+
         public string createInsertQuery(string tableName, List<Tuple<string, object>> columns)
         {
-
             string returnQuery = "INSERT INTO " + tableName + "(";
             foreach (Tuple<string, object> it in columns)
             {
                 returnQuery += it.Item1 + ", ";
             }
             returnQuery = returnQuery.Remove(returnQuery.Length - 2);
-
             returnQuery += ") VALUES (";
 
             
@@ -30,12 +29,10 @@ namespace orm.Query
                     if (it.Item2.Equals("null"))
                     {
                         returnQuery += "null, ";
-                    }else
+                    } else
                     returnQuery += "'" + it.Item2 + "'" + ", ";
-                }
-                else
-                {
-                   
+                } else
+                {                   
                     returnQuery += it.Item2 + ", ";
                 }
             }
@@ -44,6 +41,7 @@ namespace orm.Query
 
             return returnQuery;
         }
+
         public static readonly Dictionary<Type, string> CsTypesToSql = new Dictionary<Type, string>()
         {
             {typeof(System.Int64),"bigint"},
@@ -57,7 +55,6 @@ namespace orm.Query
             {typeof(System.Int32),"int" },
         };
 
-
         public string createCreateTableQuery(string tableName, List<Tuple<string, object>> columns, object primaryKey)
         {
             string returnQuery = "IF NOT EXISTS ( SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo." + tableName + "') and TYPE in (N'U')) BEGIN";
@@ -70,7 +67,6 @@ namespace orm.Query
                 if (primaryKey.Equals(it.Item1))
                 {
                     returnQuery += " PRIMARY KEY,   ";
-                    //primaryKey = false;
                 }
                 else
                     returnQuery +=  ", ";

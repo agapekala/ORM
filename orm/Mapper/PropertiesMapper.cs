@@ -26,36 +26,20 @@ namespace orm.Mapper
                 return attr.TableName;
             }
         }
-
-        //        public Boolean primaryKeyExists(Object t)
-        //        {
-        //                PrimaryKeyAttribute attr = (PrimaryKeyAttribute)Attribute.GetCustomAttribute(t.GetType(), typeof(PrimaryKeyAttribute));
-        //                Console.Write(attr.PrimaryKeyName);
-        //                if (attr == null)
-        //                {
-        //                    Console.WriteLine("Such a primary key already exists");
-        //                    return true;
-        //                }else
-        //                {
-        //                    Console.WriteLine("New primary key");
-        //                    return false;
-        //                }
-        //        }
+        
         public List<string> getColumnName(Object t)
         {
             List<string> list = new List<string> { };
-            Type type = t.GetType();  //name of a class
-                                      //            Console.WriteLine("type " + type);
+            Type type = t.GetType(); 
+
             PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (PropertyInfo prp in props) //column names
+            foreach (PropertyInfo prp in props) 
             {
-                //                Console.WriteLine("prop " + prp);
-                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
-                                                                          //                Console.WriteLine("strGetter  " + strGetter);
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); 
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
                 var val = strGetter.Invoke(t, null); //attribute np.1, John
-                                                     //                Console.WriteLine("val " + val);  
-                                                     // If no attribute was set convert field's name into string. Otherwise take string from attribute.
+
+                // If no attribute was set convert field's name into string. Otherwise take string from attribute.
                 if (att.Length == 0)
                 {
                     string columnName = convertObjectNameToString(prp.Name);
@@ -65,8 +49,6 @@ namespace orm.Mapper
                 {
                     foreach (ColumnAttribute atr in att)
                     {
-                        //column name 
-                        //                        Console.WriteLine("atr.ColumnName  " + atr.ColumnName);
                         list.Add(atr.ColumnName);
                     }
                 }
@@ -83,13 +65,13 @@ namespace orm.Mapper
             foreach (PropertyInfo prp in props)
             {
                 MethodInfo strGetter = prp.GetGetMethod(nonPublic: true);
-
                 var val = strGetter.Invoke(obj, null);
                 object[] att = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
 
                 if (att.Length == 0)
                 {
-                    continue; // If certain field is not declared as column, skip it.
+                    // If certain field is not declared as column, skip it.
+                    continue; 
                 }
 
                 string columnName;
@@ -141,9 +123,8 @@ namespace orm.Mapper
                     return primaryKey;
                 }
             }
-            return null;    //TO-DO: Handle exception!!!
+            return null;
         }
-
 
         // Returns the name of the field that is set to be a primary key.
         public string findPrimaryKeyFieldName(object obj) {
@@ -172,9 +153,8 @@ namespace orm.Mapper
                     return columnName;
                 }
             }
-            return null;    //TO-DO: Handle exception!!!
+            return null;
         }
-
 
         // Function that is used, when no attribute was set.
         public string convertObjectNameToString(Object t)
@@ -202,9 +182,6 @@ namespace orm.Mapper
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     columnNameAndItsValue.Add(reader.GetName(i), reader[i]);
-                    string formatString = "{0}";
-                    // Console.Write(String.Format(formatString, reader[i]));
-                    // Console.WriteLine(String.Format(formatString, reader.GetName(i)));
                 }
             }
             return columnNameAndItsValue;
@@ -217,13 +194,7 @@ namespace orm.Mapper
                 return null;
             }
             object[] attColumn = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
-            if (attColumn.Length == 0)
-            {
-                // TO-DO: sprawdŸ, czy jest OneToMany
-                // string columnName = convertObjectNameToString(prp.Name);
-                // list.Add(columnName); ;
-            }
-            else
+            if (attColumn.Length != 0)
             {
                 string columnNameInObject;
                 foreach (ColumnAttribute atr in attColumn)
@@ -239,8 +210,7 @@ namespace orm.Mapper
                     return columnNameAndItsValue[columnNameInObject];
                 }
             }
-            
-            return null; //TO-DO: handle exception, when value is not set.
+            return null;
         }
 
         public object mapTableIntoObject(object obj, SqlDataReader reader) {
@@ -253,10 +223,10 @@ namespace orm.Mapper
             PropertyInfo[] props = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (PropertyInfo prp in props)
             {
-                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
-                                                                          
+                MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); 
                 object[] attColumn = prp.GetCustomAttributes(typeof(ColumnAttribute), false);
                 object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
+                
                 // If no attribute was set convert field's name into string. Otherwise take string from attribute.
                 if (attColumn.Length == 0)
                 {
@@ -282,7 +252,6 @@ namespace orm.Mapper
                     }
                 }
             }
-
             return obj;
         }
 
@@ -298,7 +267,6 @@ namespace orm.Mapper
 
         public object setCertainField(object parent, object child, PropertyInfo prp) {
             prp.SetValue(parent, child, null);
-            
             return parent;
         }
     }

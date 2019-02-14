@@ -9,8 +9,6 @@ namespace orm.Mapper
 {
     class RelationshipsMapper
     {
-
-        // TO-DO: Implement findOneToManyRelationships and perhaps merge it with the below function.
         public List<IRelationship> findOneToOneRelationships(object o)
         {
             List<IRelationship> listOfRelationships = new List<IRelationship>();
@@ -31,10 +29,8 @@ namespace orm.Mapper
                     listOfRelationships.Add(oneToOneRelationship);
                 }
             }
-
             return listOfRelationships;
         }
-
 
         public List<IRelationship> findOneToManyRelationships(object o)
         {
@@ -57,8 +53,6 @@ namespace orm.Mapper
             }
             return listOfRelationships;
         }
-
-
-
+        
     }
 }

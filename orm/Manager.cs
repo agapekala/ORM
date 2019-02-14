@@ -34,66 +34,49 @@ namespace orm
         public void insert(Object obj)
         {
 
-
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
-            object primarKey = _propertiesMapper.findPrimaryKey(obj); //TO DO: exception that henadles when trying to add id that already exists
+            object primarKey = _propertiesMapper.findPrimaryKey(obj); 
             object primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
-
+            string tableName = _propertiesMapper.getTableName(obj);
 
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
             List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
-            string tableName = _propertiesMapper.getTableName(obj);
-
+            
             QueryBuilder query = new QueryBuilder();
 
             if (oneToOneRelationshipsList.Count == 0 && oneToManyRelationshipsList.Count == 0)
             {
-                
                 List<string> ColumnList = _propertiesMapper.getColumnName(obj);
-                //                    string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
                 string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
-                //                    _queries.Add(createTableQuery);
                 _queries.Add(insertQuery);
             }
             else
             {
-                //                string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
-                //                string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
-                //                _queries.Add(createTableQuery);
-                //                _queries.Add(insertQuery); 
-                operation = "insert";
                 handleRelationships(obj, null);
-                //    
-
             }
 
             _connection.ConnectAndOpen();
 
             foreach (string q in _queries)
             {
-                //Console.WriteLine(q);
                  SqlCommand command = _connection.execute(q);
                  command.ExecuteNonQuery();
-
             }
+
             _connection.Dispose();
             _queries.Clear();
-
         }
 
         public IEnumerable select(Type type, List<Criteria> listOfCriteria) {
             List<object> result = new List<object>();
 
-            QueryBuilder queryBuilder = new QueryBuilder();
             object obj = Activator.CreateInstance(type);
-
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
 
+            QueryBuilder queryBuilder = new QueryBuilder();
             String query = queryBuilder.createSelectQuery(tableName, listOfCriteria);
-            //Console.WriteLine(query);
-
-
+        
             _connection.ConnectAndOpen();
             SqlCommand command = _connection.execute(query);
             //command.ExecuteNonQuery();
@@ -108,9 +91,6 @@ namespace orm
                     if (reader.GetName(i).ToString() == primaryKeyName) {
                         listOfIds.AddLast(reader[i]);
                     }
-                    string formatString = "{0}";
-                    Console.Write(String.Format(formatString, reader[i]));
-                    Console.WriteLine(String.Format(formatString, reader.GetName(i)));
                 }
             }
             reader.Close();
@@ -121,40 +101,45 @@ namespace orm
             foreach (object id in listOfIds) {
                 result.Add(selectById(type, id));
             }
-
             return result; 
         }
 
-
         // Selects single object from database basing on its id (primary key).
         public object selectById(Type type, object id){
-            QueryBuilder queryBuilder = new QueryBuilder();
+            
             object obj = Activator.CreateInstance(type);
-
-            var nameOfBaseClass = obj.GetType().BaseType;
-            var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
-            string nameOfColumnThatRepresentsThisObjectInAnotherTable = nameOfBaseClassWithoutNamespaces + "Id";
-
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
             object primaryKeyValue = _propertiesMapper.findPrimaryKey(obj);
 
-            String query = queryBuilder.createSelectByIdQuery(tableName, id, primaryKeyName);
-           // Console.WriteLine(query);
 
+            // Gets the name of the base class to create additional column.
+            var nameOfBaseClass = obj.GetType().BaseType;
+            if (nameOfBaseClass.GetType() == typeof(object))
+            {
+                nameOfBaseClass = obj.GetType();
+            }
+            var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
+            string nameOfColumnThatRepresentsThisObjectInAnotherTable = nameOfBaseClassWithoutNamespaces + "Id";
+
+            
+            QueryBuilder queryBuilder = new QueryBuilder();
+            String query = queryBuilder.createSelectByIdQuery(tableName, id, primaryKeyName);
+
+           
             List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
             List<IRelationship> oneToManyRelationshipsList = _relationshipsMapper.findOneToManyRelationships(obj);
             
             if (oneToOneRelationshipsList.Count == 0 && oneToManyRelationshipsList.Count == 0)
             {
-
-                // Wywołanie pojedyncznego selecta i podpisanie wszystkich typów generycznych.
-                // TO-DO: Przerzucić connection.
                 _connection.ConnectAndOpen();
                 SqlCommand command = _connection.execute(query);
                 //command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
+
+                // Wywołanie pojedyncznego selecta i podpisanie wszystkich typów generycznych.
                 var mappedObject = _propertiesMapper.mapTableIntoObject(obj, reader);
+
                 _connection.Dispose();
             }
             else{
@@ -162,9 +147,7 @@ namespace orm
 
                 foreach (PropertyInfo prp in props)
                 {
-                    
-                    // OneToOne
-                    MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); //get id()  (column)
+                    MethodInfo strGetter = prp.GetGetMethod(nonPublic: true); 
                     object[] attOneToOne = prp.GetCustomAttributes(typeof(OneToOneAttribute), false);
                     object[] attOneToMany = prp.GetCustomAttributes(typeof(OneToManyAttribute), false);
 
@@ -181,7 +164,6 @@ namespace orm
                         
                         oneToManyObjectList = (List<object>)select(objectType, criterias);
                         obj = _propertiesMapper.setCertainListField(obj, oneToManyObjectList, prp);
-                        
                     }
 
                     if (attOneToOne.Length == 0)
@@ -254,27 +236,16 @@ namespace orm
                         {
                             _valuesToSet[it] = new Tuple<string, object>
                                 (colName, _propertiesMapper.findPrimaryKey(_valuesToSet[it].Item2));
-
                         }
                     }
                 }
-                /*
-                if (attOneToMany.Count() > 0)
-                {
-                    IList list = Activator.CreateInstance(prp.PropertyType) as IList;
-                    Type objectType = list.GetType().GetGenericArguments().Single();
-
-                }
-                */
-
-                var val = strGetter.Invoke(obj, null);  
             }
 
-            QueryBuilder query = new QueryBuilder();
             string tableName = _propertiesMapper.getTableName(obj);
             List<string> ColumnList = _propertiesMapper.getColumnName(obj);
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
 
+            QueryBuilder query = new QueryBuilder();
             string updateQuery = query.createUpdateQuery(tableName, _valuesToSet, criterias);
             _queries.Add(updateQuery);
 
@@ -288,57 +259,21 @@ namespace orm
             _queries.Clear();
         }
 
-
         public void delete(Type type, List<Criteria> listOfCriteria)
         {
-            List<object> result = new List<object>();
-
-            QueryBuilder queryBuilder = new QueryBuilder();
             object obj = Activator.CreateInstance(type);
-
             string tableName = _propertiesMapper.getTableName(obj);
             string primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
 
+            QueryBuilder queryBuilder = new QueryBuilder();
             String query = queryBuilder.createDeleteQuery(tableName, listOfCriteria);
             
             _connection.ConnectAndOpen();
             SqlCommand command = _connection.execute(query);
-
             command.ExecuteNonQuery();
             _connection.Dispose();
-   
         }
-        /*
-        public void delete(Object obj)
-        {
-            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
-
-            QueryBuilder query = new QueryBuilder();
-            //            if (oneToOneRelationshipsList.Count == 0)
-            //            {
-            string tableName = _propertiesMapper.getTableName(obj);
-            List<string> ColumnList = _propertiesMapper.getColumnName(obj);
-            List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
-            string deleteQuery = query.createDeleteQuery(tableName, columnsAndValuesList);
-            _queries.Add(deleteQuery);
-            //            }
-            //            else
-            //            {
-            //                operation = "delete";
-            //                handleOneToOneRelationships(obj);
-            //               }
-            _connection.ConnectAndOpen();
-            foreach (string q in _queries)
-            {
-                SqlCommand command = _connection.execute(q);
-                command.ExecuteNonQuery();
-
-            }
-            _connection.Dispose();
-            _queries.Clear();
-        }
-        */
-        
+                
         public void handleRelationships(object obj, object parent)
         {
             string tableName = _propertiesMapper.getTableName(obj);
@@ -349,12 +284,13 @@ namespace orm
             if (parent != null)
             {
                 // Gets name of the column, which contains parent's ID.
-                // string foreignColumn = _propertiesMapper.getTableName(parent); 
                 var nameOfBaseClass = parent.GetType().BaseType;
+                if (nameOfBaseClass == typeof(object)) {
+                    nameOfBaseClass = parent.GetType();
+                }
                 var nameOfBaseClassWithoutNamespaces = _propertiesMapper.convertObjectNameToString(nameOfBaseClass);
                 string foreignColumn = nameOfBaseClassWithoutNamespaces;
 
-                Console.WriteLine("value="+ nameOfBaseClassWithoutNamespaces);
                 foreignColumn += "Id";
                 object parentId = _propertiesMapper.findPrimaryKey(parent); // Gets foreign key.
                 columnsAndValuesList.Add(new Tuple<string, object>(foreignColumn, parentId));
@@ -373,26 +309,16 @@ namespace orm
             {
 
                 Type listType = rel.getOwnedType();
-
                 IEnumerable e = rel.getOwned() as IEnumerable;
-
                 foreach (object child in e)
                 {
                     handleRelationships(child, obj);
                 }
             }
 
-            switch (operation)
-            {
-                case "insert":
-                    // string createTableQuery = query.createCreateTableQuery(tableName, columnsAndValuesList);
-                    // _queries.Add(createTableQuery);
-                    string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
-                    _queries.Add(insertQuery);
-                    break;
-                case "create":
-                    break;
-            }
+            string insertQuery = query.createInsertQuery(tableName, columnsAndValuesList);
+            _queries.Add(insertQuery);
+
         }
 
         public static object ConvertList(List<Object> value, Type type)
@@ -403,20 +329,17 @@ namespace orm
 
         public void createTable(object obj)
         {
-            List<IRelationship> oneToOneRelationshipsList = _relationshipsMapper.findOneToOneRelationships(obj);
-
             List<Tuple<string, object>> columnsAndValuesList = _propertiesMapper.getColumnAndValue(obj);
             object primaryKeyName = _propertiesMapper.findPrimaryKeyFieldName(obj);
-            QueryBuilder q = new QueryBuilder();
             string tableName = _propertiesMapper.getTableName(obj);
-            
+
+            QueryBuilder q = new QueryBuilder();
             string query = q.createCreateTableQuery(tableName, columnsAndValuesList, primaryKeyName);
 
             _connection.ConnectAndOpen();
             SqlCommand command = _connection.execute(query);
             command.ExecuteNonQuery();
             _connection.Dispose();
-
         }
     }
 }
