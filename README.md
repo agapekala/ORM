@@ -79,14 +79,17 @@ myClass with OneToOneAttribute as an annotation above it.
     }
   
 Such classes are represented as following tables:
->  Table1:
->    Table name: myClass;
->    Column name : myId;
->    Column name: myColumnName;
 
-> Table2:
->    Table name: tableNameInMyClass2;
->    Column name: _id;
+| Table 1 |  |
+| ------ | ------ |
+| Table name | myClass |
+| Column name | myId |
+| Column name | myColumnName |
+
+| Table 2 | |
+| ------ | ------ |
+| Table name | tableNameInMyClass2 |
+| Column name | _id |
   
 **ONE-TO-MANY RELATIONSHIP**
 
@@ -114,15 +117,20 @@ a list of type myClass2 with an annotation OneToManyAttribute.
     }  
 
 Such classes are represented as following tables:
->    Table1:
->      Table name: myClass;
->      Column name: myId;
 
-> Table2:
->      Table name: myClass2;
->      Column name: primaryKey;
->      Column name: myClassId;
+| Table 1 | |
+| ------ | ------ |
+| Table name | myClass |
+| Column name | myId |
 
 
+| Table 2 | |
+| ------ | ------ |
+| Table name | myClass2 |
+| Column name | primaryKey |
+| Column name | myClassId | 
 
+
+### How do I use it?
+You can find usage examples in the Program.cs file.
 
