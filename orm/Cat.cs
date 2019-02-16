@@ -2,38 +2,39 @@
 using System.Collections.Generic;
 using System.Text;
 using orm.Attributes;
+
+
 namespace orm
 {
-    [Table("Dog")]
-    class Dog
+    [Table("Cats")]
+    class Cat
     {
         [Column("id")]
-        [PrimaryKey()]
+        [PrimaryKey]
         protected int _id { get; set; }
 
         [Column("miska")]
         [OneToOne()]
-        protected Bowl _bowl { get; set; } = null;
+        protected Bowl _bowl { get; set; }
 
         public void setBowl(Bowl bowl)
         {
             _bowl = bowl;
         }
 
+        public Cat(int id)
+        {
+            this._id = id;
+        }
+
         public Bowl getBowl() {
             return _bowl;
-        }
-        public Dog(int id, Bowl bowl = null)
-        {
-            _id = id;
-            _bowl = bowl;
         }
 
         public int getId() {
             return _id;
         }
 
-        public Dog() { }
-
+        public Cat() { }
     }
 }

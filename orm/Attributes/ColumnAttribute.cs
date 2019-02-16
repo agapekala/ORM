@@ -13,5 +13,6 @@ namespace orm.Attributes
         {
             ColumnName = columnName;
         }
+
     }
 }

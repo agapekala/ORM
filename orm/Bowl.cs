@@ -8,12 +8,20 @@ namespace orm
     [Table("Bowls")]
     class Bowl
     {
+        [Column("id")]
         [PrimaryKey]
-        private int _id { get; set; }
+        protected int _id { get; set; }
 
-        public Bowl(int id) {
+        public Bowl(int id)
+        {
             _id = id;
         }
 
+        public int getId() {
+            return _id;
+        }
+
+        public Bowl() {
+        }
     }
 }

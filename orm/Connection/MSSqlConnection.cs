@@ -10,6 +10,7 @@ namespace orm.Connection
         private SqlConnection Conn { get; }
         private ConnConfiguration _config;
 
+       
 
         private MSSqlConnection()
         {
@@ -26,6 +27,7 @@ namespace orm.Connection
             return Instance;
         }
 
+
         public void setConfiguration(ConnConfiguration config)
         {
             _config = config;
@@ -34,7 +36,8 @@ namespace orm.Connection
         public void ConnectAndOpen()
         {
             Conn.ConnectionString = _config.creteConnectionString();
-            Console.WriteLine(_config.creteConnectionString());
+            // Console.WriteLine("connandopen "+)
+            //Console.WriteLine("conne" + _config.creteConnectionString());
             Conn.Open();
         }
 

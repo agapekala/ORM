@@ -7,6 +7,7 @@ namespace orm.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     class PrimaryKeyAttribute : Attribute
     { 
+        public string PrimaryKeyName { get; set; }
         public PrimaryKeyAttribute()
         {
         }

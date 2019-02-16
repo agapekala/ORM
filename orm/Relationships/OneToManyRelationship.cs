@@ -4,12 +4,12 @@ using System.Text;
 
 namespace orm.Relationships
 {
-    class OneToOneRelationship : IRelationship
+    class OneToManyRelationship : IRelationship
     {
         private object _owner { get; set; }
         private object _owned { get; set; }
 
-        public OneToOneRelationship(object owner = null, object owned = null)
+        public OneToManyRelationship(object owner, object owned)
         {
             _owned = owned;
             _owner = owner;
@@ -19,5 +19,16 @@ namespace orm.Relationships
         {
             return _owned;
         }
+
+
+        public object getOwner() {
+            return _owner;
+        }
+
+        public Type getOwnedType() {
+            return _owned.GetType();
+        }
+
     }
+
 }
