@@ -107,6 +107,7 @@ namespace orm
             /*List<Criteria> updateCriterias = new List<Criteria>();
             updateCriterias.Add(Criteria.equals("id", 15));
             
+
             Dog dogUpdate = new Dog(9);
 
             var updateChanges = new List<Tuple<string, object>> {
@@ -124,6 +125,7 @@ namespace orm
 
             mng.delete(typeof(Bowl), deleteCriterias);
             */
+
         }
     }
 }
